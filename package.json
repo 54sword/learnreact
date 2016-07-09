@@ -34,15 +34,15 @@
     "sass-loader": "^3.2.1",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
-    "webpack": "^1.13.1"
-  },
-  "dependencies": {
-    "express": "^4.14.0",
+    "webpack": "^1.13.1",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "react-redux": "^4.4.5",
     "redux": "^3.5.2",
     "redux-promise": "^0.5.3",
     "redux-promise-middleware": "^3.3.0"
+  },
+  "dependencies": {
+    "express": "^4.14.0"
   }
 }
