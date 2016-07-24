@@ -1,8 +1,10 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Link, browserHistory } from 'react-router';
+import React, { Component, PropTypes } from 'react'
+import ReactDOM from 'react-dom'
+import { Link, browserHistory } from 'react-router'
 
-export default class Plist extends React.Component {
+var webapi = require('../utils/api')
+
+export default class Signup extends React.Component {
 
   constructor(props) {
     super(props)
@@ -17,20 +19,46 @@ export default class Plist extends React.Component {
   }
 
   signup(event) {
+
     event.preventDefault();
+
+    let { nickname, email, password, male } = this.refs
+
+    webapi.signup({
+      nickname: nickname.value,
+      email: email.value,
+      password: password.value,
+      gender: male.checked ? 1 : 0
+    }, function(err, result){
+
+      if (err) console.log(err);
+      if (result.success) {
+        alert('注册成功')
+      } else {
+        console.log('111')
+        console.log(result.error)
+      }
+      // console.log(result);
+    });
+
+    return false
   }
 
   render () {
-    // <Link to="/welcome/signin">已经有账号</Link>
 
     return (
-      <form id="signup" onSubmit={this.signup}>
-        <h1>注册</h1>
-        <p>昵称 <input type="text" ref="nickname" /></p>
-        <p>邮箱 <input type="text" ref="email" /></p>
-        <p>密码 <input type="password" ref="password" /></p>
-        <p><input type="submit" value="注册" /></p>
+      <form onSubmit={this.signup}>
+        <h6>注册</h6>
+        <div>昵称 <input type="text" ref="nickname" /></div>
+        <div>邮箱 <input type="text" ref="email" /></div>
+        <div>密码 <input type="password" ref="password" /></div>
+        <div>性别
+          <input type="radio" name="gender" ref="male" />男
+          <input type="radio" name="gender" />女
+        </div>
+        <div><input type="submit" value="注册" /></div>
       </form>
     )
   }
+
 }

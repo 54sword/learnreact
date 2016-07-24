@@ -1,16 +1,14 @@
 
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom';
-import { Router, Route, Link, IndexLink, IndexRoute, browserHistory } from 'react-router';
+import { Router, Route, Link, IndexRoute, browserHistory } from 'react-router';
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 import * as TodoActions from '../actions'
 
-import styles from '../static/css/modules/header.scss'
-
-// import './nav.scss';
+import './nav.scss';
 import Sign from './sign';
 
 var webapi = require('../utils/api')
@@ -19,12 +17,10 @@ class Navbar extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = {
-    }
+    this.state = {}
     this.handleSignpout = this.handleSignpout.bind(this)
     this.signout = this.signout.bind(this)
     this.showSigninBox = this.showSigninBox.bind(this)
-    // this.activeNav = this.activeNav.bind(this)
     // this.initUserInfo = this.initUserInfo.bind(this)
   }
   /*
@@ -86,62 +82,46 @@ class Navbar extends React.Component {
 
     const { user, actions } = this.props
 
-    let me
-    /*
-    if (user.userinfo) {
-      navbarRight = (
-        <ul className="nav navbar-nav navbar-right">
-          <li><a href="#">提问</a></li>
-          <li className="dropdown">
-            <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-              {user.userinfo.nickname}
-            </a>
-            <ul className="dropdown-menu">
-              <li><Link to="/me">个人主页</Link></li>
-              <li><a href="#">设置</a></li>
-              <li role="separator" className="divider"></li>
-              <li><a href="javascript:;" onClick={this.handleSignpout}>退出</a></li>
-            </ul>
-          </li>
-        </ul>
-      )
-
-    } else {
-      navbarRight = (
-        <ul className="nav navbar-nav navbar-right">
-          <li>
-            <button type="button" className="btn btn-link" data-toggle="modal" data-target="#myModal">登录/注册</button>
-          </li>
-        </ul>
-      )
-    }
-    */
+    let navbarRight
 
     if (user.userinfo) {
-      me = (<li><Link to="/me" activeClassName={styles.active}>{user.userinfo.nickname}</Link></li>)
+      navbarRight = (<ul>
+        <li><a href="#">提问</a></li>
+        <li>
+          <img src={user.userinfo.avatar_url} width="30" />
+          <Link to="/me" activeClassName="navbar-focus">
+            {user.userinfo.nickname}
+          </Link>
+        </li>
+        <li><a href="javascript:;" onClick={this.handleSignpout}>退出</a></li>
+      </ul>)
     } else {
-      me = (<li><a href="#" onClick={this.showSigninBox}>我的</a></li>)
+      navbarRight = (<div>
+        <a href="javascript:;" onClick={this.showSigninBox}>登录/注册</a>
+        {user.showSigninBox ? <Sign
+          user={user}
+          actions={actions}
+          showSigninBox={this.showSigninBox}
+          /> : ''}
+      </div>)
     }
-
-    // onClick={this.showSigninBox}
 
     // initUserInfo={this.initUserInfo}
 
     return (
-      <div>
-        <div className={styles.header}>
+      <div id="header">
+        <div className="container">
           <div>
             <ul>
-              <li><IndexLink to="/" activeClassName={styles.active}>问答</IndexLink></li>
-              <li><a href="#">主题</a></li>
-              <li><Link to="/topic" activeClassName={styles.active}>找人</Link></li>
-              {me}
+              <li><Link to="/" activeClassName="navbar-focus" onlyActiveOnIndex={true}>首页</Link></li>
+              <li><Link to="/topic" activeClassName="navbar-focus">话题</Link></li>
             </ul>
           </div>
+          <button type="button" className="btn btn-default m-t-10" data-toggle="collapse" href="#more-filter" aria-expanded="true">更多筛选条件</button>
+          <div className="navbar-right">
+            {navbarRight}
+          </div>
         </div>
-        {user.showSigninBox ?
-          <Sign user={user} actions={actions} showSigninBox={this.showSigninBox} /> : ''
-        }
       </div>
     )
   }

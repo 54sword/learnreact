@@ -4,57 +4,47 @@ import ReactDOM from 'react-dom';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
+import DocumentTitle from 'react-document-title'
+
 import * as TodoActions from '../actions'
+var webapi = require('../utils/api')
 
 import Nav from '../components/nav'
 
-let webapi = require('../utils/api')
-
-class Me extends React.Component {
+class SignupEmailVerify extends React.Component {
 
   constructor(props) {
     super(props)
-    this.signout = this.signout.bind(this)
-  }
-
-  signout() {
-    if (window.confirm('确认退出？')) {
-      const { user, actions } = this.props
-      actions.removeToken();
-      location.href = '/';
-    }
   }
 
   componentWillMount() {
-
+    let code = this.props.params.code
+    webapi.signupEmailVerify(code, function(err, result){
+      if (err) console.log(err)
+      console.log(result)
+    })
   }
 
   render () {
 
-    const { user, actions } = this.props
+
 
     return (
       <div>
-        <Nav />
-        <img src={user.userinfo.avatar_url} />
-        <div>{user.userinfo.nickname}</div>
-        <div>{user.userinfo.brief}</div>
-        <div><button type="type" className="btn" onClick={this.signout}>退出</button></div>
+        密码验证
       </div>
     );
   }
-
 }
 
-
-Me.propTypes = {
-  user: PropTypes.array.isRequired,
+SignupEmailVerify.propTypes = {
+  question: PropTypes.array.isRequired,
   actions: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state) {
   return {
-    user: state.user
+    question: state.question
   }
 }
 
@@ -67,4 +57,6 @@ function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Me)
+)(SignupEmailVerify)
+
+// export default Question

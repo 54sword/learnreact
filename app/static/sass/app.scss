@@ -1,0 +1,82 @@
+@import "reset.scss";
+@import "base.scss";
+@import "pages/question.scss";
+
+body{
+  padding-top: 60px;
+
+  @include respond-to(sm) {
+    padding-top: 10px;
+    padding-bottom: 50px;
+  }
+
+}
+
+.navbar{
+  background-color: #fff;
+  @include respond-to(sm) {
+    position: fixed !important;
+    top: auto;
+    bottom: 0 !important;
+    height: 50px;
+    margin:0px;
+    border:0px;
+    border-top:1px solid #d8d8d8;
+  }
+
+  .row{
+    > li > a{
+      display: block;
+      width:100%;
+      text-align: center;
+      height: 50px;
+      line-height: 50px;
+    }
+  }
+
+}
+
+
+.container{
+  max-width: 770px;
+}
+
+.list-group-item{
+  margin-bottom:10px;
+  border-radius: 0px !important;
+  border: 0px;
+}
+
+.navbar-default .navbar-nav > li > .active,
+.navbar-default .navbar-nav > li > .active:focus,
+.navbar-default .navbar-nav > li > .active:hover{
+  color: #555;
+  background-color: #e7e7e7;
+}
+
+
+.panel{
+  border:none;
+}
+
+#answers{
+  .answer-item{
+    border-top:1px solid #efefef;
+    padding:10px 0 10px 50px;
+    margin-top:15px;
+    .answer-header{
+      .user-avatar{
+        float:left;
+        margin-left:-50px;
+        width: 37px;
+        height: 37px;
+        border-radius: 50%;
+      }
+    }
+  }
+}
+
+.answer-item{
+  border-top:1px solid #efefef;
+  padding:15px 0 15px 0;
+}

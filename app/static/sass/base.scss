@@ -2,6 +2,23 @@ a:focus, input:focus {
   outline: none;
 }
 
+$screen-sm-min: 768px;
+$screen-md-min: 992px;
+$screen-lg-min: 1200px;
+
+@mixin respond-to($media) {
+  @if $media == sm {
+    @media only screen and (max-width: $screen-sm-min) { @content; }
+  }
+  @else if $media == md {
+    @media only screen and (min-width: $screen-sm-min + 1) and (max-width: $screen-md-min - 1) { @content; }
+  }
+  @else if $media == lg {
+    @media only screen and (min-width: $screen-md-min) { @content; }
+  }
+}
+
+
 a:hover{ text-decoration: none; }
 
 .b { font-weight: bold; }

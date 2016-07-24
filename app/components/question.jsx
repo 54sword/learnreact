@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './question.scss';
+// import './question.scss';
 
 // import {get} from '../utils/ajax';
 // import $ from 'jquery';

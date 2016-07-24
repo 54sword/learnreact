@@ -8,14 +8,17 @@ import { connect } from 'react-redux'
 
 import * as TodoActions from '../actions'
 
+import styles from '../static/css/modules/questions.scss'
+
 var webapi = require('../utils/api')
 
 class Questions extends React.Component {
 
   constructor(props) {
     super(props)
-    this.loadMore = this.loadMore.bind(this);
-    this.loadQuestions = this.loadQuestions.bind(this);
+    this.loadMore = this.loadMore.bind(this)
+    this.loadQuestions = this.loadQuestions.bind(this)
+    this.buyAnswer = this.buyAnswer.bind(this)
   }
 
   componentWillMount() {
@@ -63,55 +66,101 @@ class Questions extends React.Component {
     this.loadQuestions();
   }
 
+  buyAnswer(answerId) {
+
+    const { user, question, actions } = this.props
+
+    // console.log(user)
+
+    webapi.buyAnswer(answerId, user.userinfo.access_token, function(err, result){
+      console.log(err)
+      console.log(result)
+    });
+    // alert(answerId)
+  }
+
   render () {
+
 
     const { question, actions } = this.props
 
+    setTimeout(function(){
+      console.log($('#myModal').modal);
+    }, 4000);
+
     var questionHTML = question.questions.map(question=>{
       return (
-        <li key={question._id}>
-          <img src={question.user_id.avatar_url} />
-          <p><Link to={`/question/${question._id}`}>{question.title}</Link></p>
-          <p>{question.content}</p>
+        <div className={styles.questionItem} key={question._id}>
           <div>
+            <div className={styles.questionHeader}>
+              <Link to={`/user/${question.user_id._id}`}>
+                <img className={styles.avatar} src={question.user_id.avatar_url} />
+                <span>{question.user_id.nickname}</span>
+              </Link>
+            </div>
+            <div className={styles.questionTitle}>
+              <Link to={`/question/${question._id}`}>{question.title}</Link>
+            </div>
+          </div>
+          <div className={styles.answers}>
             {question.answers.map(answer=>{
               return (
-                <div key={answer._id}>
-                  <img src={answer.user_id.avatar_url} width="30" />
-                  <p>{answer.user_id.nickname}</p>
-                  <p>{answer.brief}</p>
-                  <p>¥{answer.price} 查看答案</p>
+                <div className={styles.answerItem} key={answer._id}>
+                  <div className={styles.answerHeader}>
+                    <img src={answer.user_id.avatar_url} />
+                    {answer.user_id.nickname} {answer.user_id.brief}
+                  </div>
+                  <div>
+                    <div>{answer.brief}</div>
+                    <Link to={`/answer/${answer._id}`}>¥{answer.price} 查看答案</Link>
+                  </div>
                 </div>
               )
             })}
           </div>
-        </li>
+        </div>
       )
     })
 
-    var loading = question.loading && question.nomore == false ? <li>正在加载中...</li> : ''
+    var loading = question.loading && question.nomore == false ? <div className="list-group-item">正在加载中...</div> : ''
 
-    var loadMore = question.nomore == false ? <li onClick={this.loadMore}><a href="javascript:;">加载更多</a></li> : <li>没有更多</li>
+    var loadMore = question.nomore == false ? <div className="list-group-item" onClick={this.loadMore}><a href="javascript:;">加载更多</a></div> : <div className="list-group-item">没有更多</div>
 
     return (
-      <ul>
+      <div className={styles.questions}>
         {questionHTML}
         {loading}
         {loadMore}
-      </ul>
+      </div>
     )
+
+    /*
+    <div className="panel panel-default">
+      <div className="panel-heading">Panel heading without title</div>
+      <div className="panel-body">
+        {questionHTML}
+      </div>
+      <div className="panel-body">
+        {loading}
+        {loadMore}
+      </div>
+    </div>
+    */
+
   }
 
 }
 
 Questions.propTypes = {
+  user: PropTypes.array.isRequired,
   question: PropTypes.array.isRequired,
   actions: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state) {
   return {
-    question: state.question
+    question: state.question,
+    user: state.user
   }
 }
 

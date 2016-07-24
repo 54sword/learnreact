@@ -1,26 +1,70 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, { Component, PropTypes } from 'react'
+import ReactDOM from 'react-dom'
+import DocumentTitle from 'react-document-title'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import * as TodoActions from '../actions'
 
 /// ---
 
-import Nav from '../components/nav';
-import Questions from '../components/questions';
+import Nav from '../components/nav'
+import Questions from '../components/questions'
 
+import styles from '../static/css/pages/home.scss'
 
-export default class Home extends React.Component {
+class Home extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
   render() {
+
+    const { user, scroll, actions } = this.props
+
     return (
+      <DocumentTitle title="问答社区">
       <div>
         <Nav />
-        <div id="main">
-          <div className="container">
-            <Questions />
-          </div>
+        <div className="container">
+          {user.userinfo ? <div><a href="#" className={styles.addQuestion}>提问</a></div> : ''}
+          <Questions />
         </div>
       </div>
+      </DocumentTitle>
     );
   }
+
+  componentDidMount() {
+    this.props.actions.setScrollPosition('home')
+  }
+
+  componentWillUnmount() {
+    this.props.actions.setScroll('home')
+  }
 }
+
+Home.propTypes = {
+  user: PropTypes.object.isRequired,
+  scroll: PropTypes.array.isRequired,
+  actions: PropTypes.object.isRequired
+}
+
+function mapStateToProps(state) {
+  return {
+    scroll: state.scroll,
+    user: state.user
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(TodoActions, dispatch)
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Home)

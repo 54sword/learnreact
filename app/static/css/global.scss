@@ -1,0 +1,40 @@
+@import "./base.scss";
+
+html {
+    font-family: PingFang-SC-Regular, sans-serif;
+    font-size: 20px;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -webkit-overflow-scrolling: touch
+}
+body {
+  padding:50px 0 0 0;
+  margin:0px;
+  font-size: .8rem;
+  color:#3f3f3f;
+  background-color: #efefef;
+  @include respond-to(sm) {
+    padding:0 0 50px 0;
+  }
+}
+
+a{
+  text-decoration: none;
+  color:#333;
+}
+
+a:focus, input:focus {
+  outline: none;
+}
+
+h1{ font-size: 40px; padding:0px; margin:0px; }
+h2{ font-size: 35px; padding:0px; margin:0px; }
+h3{ font-size: 30px; padding:0px; margin:0px; }
+h4{ font-size: 25px; padding:0px; margin:0px; }
+h5{ font-size: 20px; padding:0px; margin:0px; }
+h6{ font-size: 15px; padding:0px; margin:0px; }
+
+:global .container{
+  max-width: 770px;
+  margin: 0 auto;
+}

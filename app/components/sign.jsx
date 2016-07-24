@@ -1,54 +1,47 @@
 import React, { Component, PropTypes } from 'react'
-import ReactDOM from 'react-dom';
-import './sign.scss';
-import '../static/js/libs/jquery.cookie.js';
-import { Link, browserHistory } from 'react-router';
 
-import Signin from './signin';
-import Signup from './signup';
+import Signin from './signin'
+import Signup from './signup'
+
+import styles from '../static/css/modules/sign.scss'
 
 class Sign extends React.Component {
 
   constructor(props) {
     super(props)
-    this.addToken = this.addToken.bind(this)
-  }
-
-  addToken (token) {
-    const { actions } = this.props
-    actions.setToken(token)
   }
 
   render () {
 
     const { user, actions, showSigninBox, initUserInfo } = this.props
 
-    let sign = (
-      <div id="sign">
-        <div>
-          登录
-          <a href="javascript:;" onClick={this.props.showSigninBox}>关闭</a>
+    return (<div>
+      <div className={styles.mark} onClick={showSigninBox}></div>
+      <div className={styles.signLayer}>
+        <div className={styles.closeButton}>
+          <a href="javascript:;" onClick={showSigninBox}>x</a>
         </div>
-        <Signin
-          user={user}
-          actions={actions}
-          setToken={actions.setToken}
-          showSigninBox={showSigninBox}
-          initUserInfo={initUserInfo}
-        />
-        <Signup />
-        <div>
-          第三方账号登录：
+        <div className={styles.social}>
           <ul>
-            <li onClick={this.addTest}>微信</li>
-            <li>微博</li>
-            <li>QQ</li>
+            <li><a href="#">微信</a></li>
+            <li><a href="#">微博</a></li>
+            <li><a href="#">QQ</a></li>
           </ul>
         </div>
+        <div className={styles.signin}>
+          <Signin
+            user={user}
+            actions={actions}
+            setToken={actions.setToken}
+            showSigninBox={showSigninBox}
+            initUserInfo={initUserInfo}
+          />
+        </div>
+        <div className={styles.signup}>
+          <Signup />
+        </div>
       </div>
-    )
-
-    return sign
+    </div>)
   }
 }
 
