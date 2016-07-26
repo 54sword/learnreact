@@ -2,6 +2,7 @@ var path = require('path');
 var webpack = require('webpack');
 var HtmlwebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var CleanWebpackPlugin = require('clean-webpack-plugin');
 
 var ROOT_PATH = path.resolve(__dirname);
 var APP_PATH = path.resolve(ROOT_PATH, 'app');
@@ -9,6 +10,7 @@ var BUILD_PATH = path.resolve(ROOT_PATH, 'build');
 var NODE_MODULES_PATH = path.resolve(ROOT_PATH, 'node_modules');
 var BOWER_COMPONENTS = path.resolve(ROOT_PATH, 'app/bower_components')
 
+var config = require('./app/config/config.js');
 
 module.exports= {
   entry: {
@@ -17,7 +19,7 @@ module.exports= {
     ],
     //添加要打包在vendors里面的库
     vendors: [
-      path.resolve(BOWER_COMPONENTS, './jquery.cookie/jquery.cookie.js'),
+      // path.resolve(BOWER_COMPONENTS, './jquery.cookie/jquery.cookie.js'),
 
       // path.resolve(BOWER_COMPONENTS, './bootstrap/dist/css/bootstrap.min.css'),
       // path.resolve(BOWER_COMPONENTS, './bootstrap/dist/js/bootstrap.min.js'),
@@ -25,7 +27,7 @@ module.exports= {
   },
   output: {
     path: BUILD_PATH,
-    publicPath: '', // 打包文件内用到的URL路径, 比如背景图等(可以设成http的地址, 比如: http://cdn.my.com)
+    publicPath: 'http://localhost:8080/', // 打包文件内用到的URL路径, 比如背景图等(可以设成http的地址, 比如: http://cdn.my.com)
     filename: '[name].[hash].js'
   },
   //enable dev source map
@@ -49,7 +51,7 @@ module.exports= {
         test: /\.scss$/,
         loaders: [
           'style',
-          'css?module&localIdentName=[hash:base64:5]&-url',
+          'css?module&localIdentName=[hash:base64:3]&-url',
           // 'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
           // 'resolve-url',
           'sass'
@@ -82,9 +84,9 @@ module.exports= {
     //这个使用uglifyJs压缩你的js代码
     // new webpack.optimize.UglifyJsPlugin({minimize: true}),
     //把入口文件里面的数组打包成verdors.js
-    new webpack.optimize.CommonsChunkPlugin('common.[hash].js', ['app', 'vendors']),
+    // new webpack.optimize.CommonsChunkPlugin('common.[hash].js', ['app', 'vendors']),
     new HtmlwebpackPlugin({
-      title: 'My App',
+      title: config.name,
       template: path.resolve(APP_PATH, 'views/index.html')
     }),
 

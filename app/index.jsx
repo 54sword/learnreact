@@ -1,126 +1,89 @@
-import React, { Component, PropTypes } from 'react'
+import React from 'react'
 import { render } from 'react-dom'
-import { Provider } from 'react-redux'
-import { Router, Route, Link, IndexRoute, browserHistory } from 'react-router'
+import { Provider, connect } from 'react-redux'
+import { Router, Route, IndexRoute, browserHistory } from 'react-router'
+import cookie from 'react-cookie'
 
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-
-import * as TodoActions from './actions'
-
-var webapi = require('./utils/api')
-
-/// ---
+// ---
 
 import configureStore from './store/configureStore'
+let store = configureStore()
 
-/// ---
+// ---
 
-// import './static/sass/app.scss'
-import styles from './static/css/global.scss'
-/// ---
+import styles from './pages/global.scss'
 
-// import Welcome from './pages/welcome'
+// ---
+
 import Home from './pages/home'
 import Topic from './pages/topic'
 import Question from './pages/question'
 import Me from './pages/me'
 import NotFound from './pages/not-found'
-import Signin from './components/signin'
-import Signup from './components/signup'
 import Answer from './pages/answer'
+import AddAnswer from './pages/add-answer'
+import Find from './pages/find'
+
 import signupEmailVerify from './pages/signup-email-verify'
+import AddQuestion from './pages/add-question'
 
-// import config from './config/config'
+// ----
 
-/// ---
+let webapi = require('./utils/api')
 
-var webapi = require('./utils/api')
+let accessToken = cookie.load('accessToken')
 
-const store = configureStore()
+if (!accessToken) {
+  start(false);
+} else {
 
-class App extends React.Component {
+  // 如果有登录状态，那么验证登录
+  webapi.fetchUserinfo(accessToken, function(err, data){
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      dataInit: false
+    if (err) {
+      store.dispatch({ type: 'REMOVE_COOKIE' })
+      location.reload()
+      return;
+    }
+
+    store.dispatch({ type: 'SET_TOKEN', token: accessToken })
+    store.dispatch({ type: 'SET_USER', userinfo: data.data.user})
+
+    start(true);
+  });
+}
+
+// 开始
+function start(isSignin){
+
+  // 验证是否登录
+  function requireAuth(nextState, replaceState) {
+    if (!isSignin) {
+      replaceState({ nextPathname: nextState.location.pathname }, '/')
     }
   }
 
-  componentWillMount() {
-
-    let _self = this
-
-    const { user, actions } = this.props
-
-    let accessToken = $.cookie('accessToken') || null;
-
-    if (accessToken) {
-      webapi.fetchUserinfo(accessToken, function(err, data){
-
-        if (err) {
-          actions.removeToken()
-          location.reload()
-          return;
-        }
-
-        actions.setUser(accessToken)
-        actions.setUser(data.data.user)
-        _self.setState({ dataInit: true })
-      });
-    } else {
-      _self.setState({ dataInit: true })
-    }
-
+  class APP extends React.Component {
+    render() { return this.props.children }
   }
 
-  render() {
-    if (this.state.dataInit) {
-      return this.props.children
-    } else {
-      return (<div></div>)
-    }
-  }
+  render((
+    <Provider store={store}>
+      <Router history={browserHistory}>
+        <Route path="/" component={APP}>
+          <IndexRoute component={Home} />
+          <Route path="topic" component={Topic} />
+          <Route path="question/:questionId" component={Question} />
+          <Route path="answer/:answerId" component={Answer} />
+          <Route path="signup-email-verify/:code" component={signupEmailVerify} />
+          <Route path="me" component={Me} onEnter={requireAuth} />
+          <Route path="add-question" component={AddQuestion} onEnter={requireAuth} />
+          <Route path="add-answer/:questionId" component={AddAnswer} onEnter={requireAuth} />
+          <Route path="find" component={Find} />
+          <Route path="*" component={NotFound} />
+        </Route>
+      </Router>
+    </Provider>
+  ), document.body);
+
 }
-
-App.propTypes = {
-  user: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired
-}
-
-function mapStateToProps(state) {
-  return {
-    user: state.user
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators(TodoActions, dispatch)
-  }
-}
-
-let _APP = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App)
-
-const app = document.createElement('div');
-document.body.appendChild(app);
-
-render((
-  <Provider store={store}>
-    <Router history={browserHistory}>
-      <Route path="/" component={_APP}>
-        <IndexRoute component={Home}/>
-        <Route path="topic" component={Topic}/>
-        <Route path="question/:questionId" component={Question}/>
-        <Route path="answer/:answerId" component={Answer} />
-        <Route path="signup-email-verify/:code" component={signupEmailVerify} />
-        <Route path="me" component={Me}/>
-        <Route path="*" component={NotFound}/>
-      </Route>
-    </Router>
-  </Provider>
-), app);

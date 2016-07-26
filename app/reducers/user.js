@@ -2,6 +2,9 @@
 import { ADD_TODO, DELETE_TODO, EDIT_TODO, COMPLETE_TODO, COMPLETE_ALL, CLEAR_COMPLETED } from '../constants/ActionTypes'
 */
 
+import { ADD_ACCESS_TOKEN } from '../constants/ActionTypes'
+
+import cookie from 'react-cookie';
 
 let initialState = {
   token: null,
@@ -17,14 +20,16 @@ export default function todos(state = initialState, action) {
       state.userinfo = action.userinfo
       return state
 
-    case 'SET_TOKEN':
+    case ADD_ACCESS_TOKEN:
       state.token = action.token
       // 保存token，保持登录状态
-      $.cookie('accessToken', state.token, { expires: 7, path: '/' })
+      // $.cookie('accessToken', state.token, { expires: 7, path: '/' })
+      cookie.save('accessToken', state.token, { expires: new Date( new Date().getTime() + 1000*60*60*24*7 ), path: '/' })
       return state
     case 'REMOVE_COOKIE':
       // 保存token，保持登录状态
-      $.removeCookie('accessToken', { path: '/' })
+      // $.removeCookie('accessToken', { path: '/' })
+      cookie.remove('accessToken', { path: '/' })
       return state
 
     case 'SIGNIN_PENDING':
@@ -46,7 +51,8 @@ export default function todos(state = initialState, action) {
       return state
     case 'SIGNOUT':
       state.token = null
-      $.removeCookie('accessToken')
+      // $.removeCookie('accessToken')
+      cookie.remove('accessToken')
       return state
 
     case 'SHOW_SIGNIN_BOX':

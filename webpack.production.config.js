@@ -8,7 +8,6 @@ var ROOT_PATH = path.resolve(__dirname);
 var APP_PATH = path.resolve(ROOT_PATH, 'app');
 var BUILD_PATH = path.resolve(ROOT_PATH, 'build');
 var NODE_MODULES_PATH = path.resolve(ROOT_PATH, 'node_modules');
-
 var BOWER_COMPONENTS = path.resolve(ROOT_PATH, 'app/bower_components')
 
 var config = require('./app/config/config.js');
@@ -20,7 +19,7 @@ module.exports= {
     ],
     //添加要打包在vendors里面的库
     vendors: [
-      path.resolve(BOWER_COMPONENTS, './jquery.cookie/jquery.cookie.js'),
+      // path.resolve(BOWER_COMPONENTS, './jquery.cookie/jquery.cookie.js'),
 
       // path.resolve(BOWER_COMPONENTS, './bootstrap/dist/css/bootstrap.min.css'),
       // path.resolve(BOWER_COMPONENTS, './bootstrap/dist/js/bootstrap.min.js'),
@@ -71,9 +70,9 @@ module.exports= {
     //这个使用uglifyJs压缩你的js代码
     new webpack.optimize.UglifyJsPlugin({minimize: true}),
     //把入口文件里面的数组打包成verdors.js
-    new webpack.optimize.CommonsChunkPlugin('common.[hash].js', ['app', 'vendors']),
+    // new webpack.optimize.CommonsChunkPlugin('common.[hash].js', ['app', 'vendors']),
     new HtmlwebpackPlugin({
-      title: 'My first react app',
+      title: config.name,
       template: path.resolve(APP_PATH, 'views/index.html')
     }),
     new webpack.ProvidePlugin({

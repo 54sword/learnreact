@@ -1,11 +1,34 @@
 import * as types from '../constants/ActionTypes'
 
+import config from '../config/config'
+let apiUrl = config.API_URL
+
+export function signin(email, password, callback) {
+  return dispatch => {
+    $.ajax({
+      url: apiUrl+'/api/v1/signin',
+      type: 'post',
+      data: {
+        email: email,
+        password: password
+      },
+      error(err) {
+        callback(err.responseJSON.error)
+      },
+      success(result) {
+        dispatch(addAccessToken(result.data.access_token))
+        callback(null)
+      }
+    })
+  };
+}
+
 export function setUser(userinfo) {
   return { type: 'SET_USER', userinfo }
 }
 
-export function setToken(token) {
-  return { type: 'SET_TOKEN', token }
+export function addAccessToken(token) {
+  return { type: types.ADD_ACCESS_TOKEN, token }
 }
 
 export function removeToken() {
