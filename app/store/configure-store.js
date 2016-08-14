@@ -1,11 +1,19 @@
 import { createStore, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
-import rootReducer from '../reducers'
-
+import logger from 'redux-logger'
+import reducer from '../reducers'
 
 export default function configureStore(preloadedState) {
 
-  const store = createStore(rootReducer, applyMiddleware(thunk))
+  const middleware = process.env.NODE_ENV === 'production' ?
+    [ thunk ] :
+    [ thunk, logger() ]
+
+  const store = createStore(
+    reducer,
+    applyMiddleware(...middleware)
+    // applyMiddleware(thunk)
+  )
 
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers

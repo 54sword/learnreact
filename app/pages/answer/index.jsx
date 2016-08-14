@@ -4,8 +4,6 @@ import ReactDOM from 'react-dom';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-import DocumentTitle from 'react-document-title'
-
 import * as TodoActions from '../../actions'
 var webapi = require('../../utils/api')
 
@@ -51,9 +49,9 @@ class Question extends React.Component {
     if (!answer) {
       return(<div></div>)
     } else {
-
+      // <DocumentTitle title={answer.brief}>
       return (
-        <DocumentTitle title={answer.brief}>
+
         <div>
           <Nav />
           <div>
@@ -71,7 +69,6 @@ class Question extends React.Component {
             </div>
           </div>
         </div>
-        </DocumentTitle>
       )
 
     }

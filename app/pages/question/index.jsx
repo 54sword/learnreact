@@ -5,8 +5,6 @@ import { Link } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-import DocumentTitle from 'react-document-title'
-
 import * as TodoActions from '../../actions'
 var webapi = require('../../utils/api')
 
@@ -49,6 +47,8 @@ class Question extends React.Component {
 
   componentWillMount() {
 
+    console.log('我进入问题页面了')
+
     let _self = this
     let questionId = _self.props.params.questionId
 
@@ -88,11 +88,13 @@ class Question extends React.Component {
     const { question, answers } = this.state
 
     if (!question) {
-      return (<div></div>)
+      return (<div>问题不存在</div>)
     }
 
+    // <DocumentTitle title={question.title}>
+
     return (
-      <DocumentTitle title={question.title}>
+
       <div>
         <Nav />
 
@@ -136,7 +138,6 @@ class Question extends React.Component {
         </div>
 
       </div>
-      </DocumentTitle>
     );
   }
 }

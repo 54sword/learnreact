@@ -5,7 +5,7 @@ import DocumentTitle from 'react-document-title'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import * as TodoActions from '../../actions'
+import * as actions from '../../actions'
 
 import Nav from '../../components/nav'
 
@@ -59,8 +59,22 @@ class AddAnswer extends React.Component {
   submitQuestion() {
     let questionId = this.props.params.questionId
     let { answerBrief, answerDetail, answerPrice } = this.refs
-    let { user } = this.props
+    const { user, actions } = this.props
 
+    console.log(user)
+
+    actions.addAnswer({
+      questionId: questionId,
+      answerBrief: answerBrief.value,
+      answerDetail: answerDetail.value,
+      answerPrice: answerPrice.value,
+      deviceId: 1
+    }, user.token, function(err, result){
+      console.log(err)
+      console.log(result)
+    })
+
+    /*
     webapi.addAnswer({
       question_id: questionId,
       answer_brief: answerBrief.value,
@@ -71,6 +85,7 @@ class AddAnswer extends React.Component {
       console.log(err)
       console.log(result)
     });
+    */
 
   }
 
@@ -133,7 +148,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(TodoActions, dispatch)
+    actions: bindActionCreators(actions, dispatch)
   }
 }
 

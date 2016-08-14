@@ -12,20 +12,38 @@ export default function question(state = initialState, action) {
 
     case 'ADD_QUESTIONS':
 
+      return Object.assign({}, state, {
+        questions: state.questions.concat(action.questions),
+        date: action.questions[action.questions.length - 1].last_comment_at
+      })
+
+      /*
       action.questions.forEach(function(v){
         state.questions.push(v)
       })
 
       state.date = state.questions[state.questions.length - 1].last_comment_at
       return state
+      */
 
     case 'LOADING_QUESTIONS':
-      state.loading = action.bl;
-      return state
+
+      return Object.assign({}, state, {
+        loading: action.bl
+      })
+
+      // state.loading = action.bl;
+
+      // return state
 
     case 'NOMORE_QUESTIONS':
-      state.nomore = action.bl;
-      return state
+
+      return Object.assign({}, state, {
+        nomore: action.bl
+      })
+
+      // state.nomore = action.bl;
+      // return state
 
     default:
       return state

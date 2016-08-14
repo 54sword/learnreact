@@ -48,6 +48,7 @@ class Navbar extends React.Component {
     const { user, actions } = this.props
 
     let me
+    //  onClick={this.showSigninBox}
 
     if (user.userinfo) {
       me = (<li><Link to="/me" activeClassName={styles.active}>{user.userinfo.nickname}</Link></li>)
@@ -76,7 +77,7 @@ class Navbar extends React.Component {
 }
 
 Navbar.propTypes = {
-  user: PropTypes.array.isRequired,
+  user: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired
 }
 

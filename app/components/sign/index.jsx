@@ -5,8 +5,6 @@ import Signup from './signup'
 
 import styles from './index.scss'
 
-var webapi = require('../../utils/api')
-
 class Sign extends React.Component {
 
   constructor(props) {
@@ -33,7 +31,7 @@ class Sign extends React.Component {
         <div className={styles.signin}>
           <Signin signin={actions.signin} />
         </div>
-        <Signup />
+        <Signup signup={actions.signup} />
       </div>
     </div>)
   }

@@ -11,6 +11,7 @@ var NODE_MODULES_PATH = path.resolve(ROOT_PATH, 'node_modules');
 var BOWER_COMPONENTS = path.resolve(ROOT_PATH, 'app/bower_components')
 
 var config = require('./app/config/config.js');
+// process.env.NODE_ENV = 'production';
 
 module.exports= {
   entry: {
@@ -50,7 +51,7 @@ module.exports= {
         ]
       },
       // { test: /\.(css|scss)$/, loader: 'style!css!sass' },
-      { test: /\.(png|jpg)$/, loader: 'url?limit=40000' },
+      { test: /\.(png|jpg|gif)$/, loader: 'url?limit=40000' },
       { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&minetype=application/font-woff" },
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" }
     ]
@@ -64,7 +65,7 @@ module.exports= {
     }),
     new webpack.DefinePlugin({
       "process.env": {
-        NODE_ENV: JSON.stringify("production")
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV)
       }
     }),
     //这个使用uglifyJs压缩你的js代码

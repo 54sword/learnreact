@@ -1,12 +1,10 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { Link } from 'react-router'
-import DocumentTitle from 'react-document-title'
-
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import * as TodoActions from '../../actions'
+import * as Actions from '../../actions'
 
 /// ---
 
@@ -22,18 +20,21 @@ class Home extends React.Component {
   }
 
   render() {
-    const { user, scroll, actions } = this.props
+    const { user, question, actions } = this.props
+
+
 
     return (
-      <DocumentTitle title="问答社区">
       <div>
         <Nav />
         <div className="container">
           {user.userinfo ? <div><Link to="/add-question" className={styles.addQuestion}>提问</Link></div> : ''}
-          <Questions />
+          <Questions
+            questions={question}
+            actions={actions}
+          />
         </div>
       </div>
-      </DocumentTitle>
     );
   }
 
@@ -48,20 +49,21 @@ class Home extends React.Component {
 
 Home.propTypes = {
   user: PropTypes.object.isRequired,
-  scroll: PropTypes.array.isRequired,
+  question: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     scroll: state.scroll,
-    user: state.user
+    user: state.user,
+    question: state.question
   }
 }
 
-function mapDispatchToProps(dispatch) {
+const mapDispatchToProps = (dispatch) => {
   return {
-    actions: bindActionCreators(TodoActions, dispatch)
+    actions: bindActionCreators(Actions, dispatch)
   }
 }
 

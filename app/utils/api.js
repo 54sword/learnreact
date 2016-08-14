@@ -1,5 +1,5 @@
 
-import config from '../config/config'
+import config from '../../config/config'
 let apiUrl = config.API_URL
 
 // 购买答案

@@ -51,7 +51,7 @@ class AddQuestion extends React.Component {
         alert(err);
         return;
       }
-      browserHistory.push('./question/'+res.data._id);
+      window.location.href = './question/'+res.data._id
     });
   }
 

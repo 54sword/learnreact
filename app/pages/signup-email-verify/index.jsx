@@ -4,10 +4,7 @@ import ReactDOM from 'react-dom'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-import DocumentTitle from 'react-document-title'
-
-import * as TodoActions from '../../actions'
-var webapi = require('../../utils/api')
+import * as Actions from '../../actions'
 
 import Nav from '../../components/nav'
 
@@ -15,24 +12,35 @@ class SignupEmailVerify extends React.Component {
 
   constructor(props) {
     super(props)
+    this.state = {
+      status: '正在邮箱验证中...'
+    }
   }
-
+  
   componentWillMount() {
+    let self = this
     let code = this.props.params.code
-    webapi.signupEmailVerify(code, function(err, result){
+
+    const { signupEmailVerify } = this.props.actions
+
+    signupEmailVerify(code, function(err, result){
       if (err) console.log(err)
-      console.log(result)
+      if (result.success == true) {
+        self.setState({
+          status: '邮箱验证成功！'
+        })
+        // browserHistory.push('/search?id=1');
+      } else {
+        self.setState({
+          status: '邮箱验证失败'
+        })
+      }
     })
   }
 
   render () {
-
-
-
     return (
-      <div>
-        密码验证
-      </div>
+      <div><Nav />{this.state.status}</div>
     );
   }
 }
@@ -50,7 +58,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(TodoActions, dispatch)
+    actions: bindActionCreators(Actions, dispatch)
   }
 }
 

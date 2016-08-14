@@ -10,7 +10,9 @@ var BUILD_PATH = path.resolve(ROOT_PATH, 'build');
 var NODE_MODULES_PATH = path.resolve(ROOT_PATH, 'node_modules');
 var BOWER_COMPONENTS = path.resolve(ROOT_PATH, 'app/bower_components')
 
-var config = require('./app/config/config.js');
+var config = require('./config/config.js');
+
+// process.env.NODE_ENV = 'development';
 
 module.exports= {
   entry: {
@@ -27,7 +29,7 @@ module.exports= {
   },
   output: {
     path: BUILD_PATH,
-    publicPath: 'http://localhost:8080/', // 打包文件内用到的URL路径, 比如背景图等(可以设成http的地址, 比如: http://cdn.my.com)
+    publicPath: config.PUBLIC_PATH, // 打包文件内用到的URL路径, 比如背景图等(可以设成http的地址, 比如: http://cdn.my.com)
     filename: '[name].[hash].js'
   },
   //enable dev source map
@@ -37,7 +39,9 @@ module.exports= {
     historyApiFallback: true,
     hot: true,
     inline: true,
-    progress: true
+    progress: true,
+    host: config.host,
+    port: config.port,
   },
   resolve: {
     extensions: ['', '.js', '.jsx'],
@@ -63,7 +67,7 @@ module.exports= {
       // },
       // { test: /\.css$/, loader: ExtractTextPlugin.extract('style', 'css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]') },
       // { test: /\.(css|scss)$/, loader: 'style!css!sass' },
-      { test: /\.(png|jpg)$/, loader: 'url?limit=40000' },
+      { test: /\.(png|jpg|gif)$/, loader: 'url?limit=40000' },
       { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&minetype=application/font-woff" },
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" }
     ]
@@ -73,7 +77,7 @@ module.exports= {
     // Warning: Failed prop type: Invalid prop `user` of type `object` supplied to `App`, expected `array`.
     new webpack.DefinePlugin({
       "process.env": {
-        NODE_ENV: JSON.stringify("production")
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV)
       }
     }),
 

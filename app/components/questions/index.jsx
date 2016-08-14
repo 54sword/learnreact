@@ -1,16 +1,16 @@
 
 import React, { Component, PropTypes } from 'react'
-import ReactDOM from 'react-dom';
-import { Link } from 'react-router';
+// import ReactDOM from 'react-dom'
+import { Link } from 'react-router'
 
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+// import { bindActionCreators } from 'redux'
+// import { connect } from 'react-redux'
 
-import * as TodoActions from '../../actions'
+// import * as Actions from '../../actions'
 
 import styles from './index.scss'
 
-var webapi = require('../../utils/api')
+// import { getQuestions } from '../../reducers'
 
 class Questions extends React.Component {
 
@@ -24,7 +24,7 @@ class Questions extends React.Component {
 
     var _self = this;
 
-    this.loadQuestions();
+    _self.loadQuestions();
 
     var $window = $(window);
     var $document = $(document);
@@ -37,17 +37,20 @@ class Questions extends React.Component {
 
   loadQuestions () {
 
-    const { question, actions } = this.props
+    this.props.actions.fetchQuestions()
 
-    let _self = this;
-
+    /*
     if (question.nomore || question.loading) {
       return;
     }
+    */
 
+
+
+    /*
     actions.loadingQuestions(true)
 
-    webapi.fetchQuestions(question.perPage, question.date, function(err, result){
+    actions.fetchQuestions(question.perPage, question.date, function(err, result){
 
       actions.loadingQuestions(false)
 
@@ -57,8 +60,8 @@ class Questions extends React.Component {
         actions.addQuestions(result)
       }
 
-      _self.setState();
     })
+    */
   }
 
   loadMore () {
@@ -66,9 +69,10 @@ class Questions extends React.Component {
   }
 
   render () {
-    const { question, actions } = this.props
 
-    var questionHTML = question.questions.map(question=>{
+    const { questions } = this.props
+
+    var questionHTML = questions.questions.map(question=>{
       return (
         <div className={styles.questionItem} key={question._id}>
           <div>
@@ -102,9 +106,9 @@ class Questions extends React.Component {
       )
     })
 
-    var loading = question.loading && question.nomore == false ? <div className="list-group-item">正在加载中...</div> : ''
+    var loading = questions.loading && questions.nomore == false ? <div className="list-group-item">正在加载中...</div> : ''
 
-    var loadMore = question.nomore == false ? <div className="list-group-item" onClick={this.loadMore}><a href="javascript:;">加载更多</a></div> : <div className="list-group-item">没有更多</div>
+    var loadMore = questions.nomore == false ? <div className="list-group-item" onClick={this.loadMore}><a href="javascript:;">加载更多</a></div> : <div className="list-group-item">没有更多</div>
 
     return (
       <div className={styles.questions}>
@@ -117,26 +121,29 @@ class Questions extends React.Component {
 
 }
 
+/*
 Questions.propTypes = {
-  user: PropTypes.array.isRequired,
-  question: PropTypes.array.isRequired,
+  // user: PropTypes.object.isRequired,
+  questions: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired
 }
 
-function mapStateToProps(state) {
+
+const mapStateToProps = (state) => {
   return {
     question: state.question,
-    user: state.user
+    // user: state.user
   }
 }
 
-function mapDispatchToProps(dispatch) {
+const mapDispatchToProps = (dispatch) => {
   return {
-    actions: bindActionCreators(TodoActions, dispatch)
+    actions: bindActionCreators(Actions, dispatch)
   }
 }
+*/
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Questions)
+
+export default Questions;
+
+// export default connect(mapStateToProps, mapDispatchToProps)(Questions)

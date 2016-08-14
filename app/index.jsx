@@ -4,17 +4,8 @@ import { Provider, connect } from 'react-redux'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import cookie from 'react-cookie'
 
-// ---
-
-import configureStore from './store/configureStore'
-let store = configureStore()
-
-// ---
-
-import styles from './pages/global.scss'
-
-// ---
-
+// -----
+// 页面
 import Home from './pages/home'
 import Topic from './pages/topic'
 import Question from './pages/question'
@@ -23,38 +14,40 @@ import NotFound from './pages/not-found'
 import Answer from './pages/answer'
 import AddAnswer from './pages/add-answer'
 import Find from './pages/find'
-
 import signupEmailVerify from './pages/signup-email-verify'
 import AddQuestion from './pages/add-question'
 
+// -----
+// css 样式
+import styles from './pages/global.scss'
+
 // ----
 
-let webapi = require('./utils/api')
+import { bindActionCreators } from 'redux'
+import * as actions from './actions'
+import configureStore from './store/configure-store'
+let store = configureStore()
 
+// ---
+// 如果包含accessToken 那么验证是否有效
 let accessToken = cookie.load('accessToken')
 
 if (!accessToken) {
-  start(false);
+  start(false)
 } else {
-
-  // 如果有登录状态，那么验证登录
-  webapi.fetchUserinfo(accessToken, function(err, data){
-
+  bindActionCreators(actions, store.dispatch)
+  .fetchUserInfo(accessToken, function(err){
+    // 判断是否是有效的token
     if (err) {
-      store.dispatch({ type: 'REMOVE_COOKIE' })
       location.reload()
-      return;
+    } else {
+      start(true)
     }
-
-    store.dispatch({ type: 'SET_TOKEN', token: accessToken })
-    store.dispatch({ type: 'SET_USER', userinfo: data.data.user})
-
-    start(true);
-  });
+  })
 }
 
 // 开始
-function start(isSignin){
+function start(isSignin) {
 
   // 验证是否登录
   function requireAuth(nextState, replaceState) {
@@ -66,6 +59,9 @@ function start(isSignin){
   class APP extends React.Component {
     render() { return this.props.children }
   }
+
+  let box = document.createElement('div')
+  document.getElementsByTagName('body')[0].appendChild(box)
 
   render((
     <Provider store={store}>
@@ -84,6 +80,6 @@ function start(isSignin){
         </Route>
       </Router>
     </Provider>
-  ), document.body);
+  ), box);
 
 }

@@ -8,3 +8,8 @@ const rootReducer = combineReducers({
 })
 
 export default rootReducer
+
+
+export function getQuestions(state) {
+  return state.question
+}
