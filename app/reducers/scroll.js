@@ -5,7 +5,7 @@ export default function scroll(state = initialState, action) {
 
   switch (action.type) {
 
-    case 'SET_SCROLL':
+    case 'SAVE_SCROLL_POSITION':
       state[action.name] = $(document).scrollTop()
       return state
 

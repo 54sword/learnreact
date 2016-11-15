@@ -1,9 +1,15 @@
 import React, { Component, PropTypes } from 'react'
 
+import CSSModules from 'react-css-modules'
+import styles from './style.scss'
+
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { signin, signup, hideSign } from '../../actions/sign'
+import { addCaptcha } from '../../actions/captcha'
+
 import Signin from './signin'
 import Signup from './signup'
-
-import styles from './index.scss'
 
 class Sign extends React.Component {
 
@@ -13,34 +19,50 @@ class Sign extends React.Component {
 
   render () {
 
-    const { user, actions, showSigninBox, initUserInfo } = this.props
+    const { signin, signup, hideSign, addCaptcha } = this.props
 
     return (<div>
-      <div className={styles.mark} onClick={showSigninBox}></div>
-      <div className={styles.signLayer}>
-        <div className={styles.closeButton}>
-          <a href="javascript:;" onClick={showSigninBox}>x</a>
+      <div styleName="mark" onClick={hideSign}></div>
+      <div styleName="signLayer">
+        <div styleName="closeButton">
+          <a href="javascript:;" onClick={hideSign}></a>
         </div>
-        <div className={styles.social}>
+        <div styleName="social">
           <ul>
-            <li><a href="#">微信</a></li>
-            <li><a href="#">微博</a></li>
-            <li><a href="#">QQ</a></li>
+            <li><a href="http://api.xiaoduyu.com/oauth/weibo">微博</a></li>
+            <li><a href="http://api.xiaoduyu.com/oauth/qq">QQ</a></li>
           </ul>
         </div>
-        <div className={styles.signin}>
-          <Signin signin={actions.signin} />
-        </div>
-        <Signup signup={actions.signup} />
+        <Signin signin={signin} hideSign={hideSign} />
+        <Signup signup={signup} hideSign={hideSign} addCaptcha={addCaptcha} />
       </div>
     </div>)
   }
 }
 
-
 Sign.propTypes = {
-  user: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired
+  signin: PropTypes.func.isRequired,
+  signup: PropTypes.func.isRequired,
+  hideSign: PropTypes.func.isRequired,
+  addCaptcha: PropTypes.func.isRequired
 }
 
-export default Sign;
+const mapStateToProps = (state) => {
+  return {}
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    signin: bindActionCreators(signin, dispatch),
+    signup: bindActionCreators(signup, dispatch),
+    hideSign: bindActionCreators(hideSign, dispatch),
+    addCaptcha: bindActionCreators(addCaptcha, dispatch)
+  }
+}
+
+Sign = CSSModules(Sign, styles)
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Sign)

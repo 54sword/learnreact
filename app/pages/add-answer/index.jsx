@@ -1,17 +1,17 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { Router, Route, Redirect, Link, IndexLink, IndexRoute, browserHistory } from 'react-router';
-import DocumentTitle from 'react-document-title'
+import { browserHistory } from 'react-router'
+
+import CSSModules from 'react-css-modules'
+import styles from './style.scss'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import * as actions from '../../actions'
+import { loadQuestionById } from '../../actions/questions'
+import { getQuestionById } from '../../reducers/questions'
+import { addAnswer, resetNewAnswersList } from '../../actions/answers'
 
-import Nav from '../../components/nav'
-
-import styles from './index.scss'
-
-var webapi = require('../../utils/api')
+import Subnav from '../../components/subnav'
 
 class AddAnswer extends React.Component {
 
@@ -27,88 +27,64 @@ class AddAnswer extends React.Component {
 
     let _self = this
     let questionId = _self.props.params.questionId
+    let { loadQuestionById } = this.props
 
-    const { question, actions } = this.props
+    const [ question ] = this.props.question
 
-    for (var i = 0, max = question.questions.length; i < max; i++) {
-      if (question.questions[i]._id == questionId) {
-
-        _self.setState({
-          question: question.questions[i]
-        });
-
-        return;
-      }
+    if (!question) {
+      loadQuestionById()
     }
-
-    // 如果数据流中没有对应的问题，那么从服务器上获取
-    webapi.fetchQuestionById(questionId, function(err, result){
-      if (err) {
-        console.log(err);
-        return;
-      }
-      if (result && result.success) {
-        _self.setState({
-          "question": result.data.question
-        });
-      }
-    });
 
   }
 
   submitQuestion() {
+
+    let { addAnswer, resetNewAnswersList } = this.props
     let questionId = this.props.params.questionId
     let { answerBrief, answerDetail, answerPrice } = this.refs
-    const { user, actions } = this.props
 
-    console.log(user)
-
-    actions.addAnswer({
+    addAnswer({
       questionId: questionId,
-      answerBrief: answerBrief.value,
-      answerDetail: answerDetail.value,
+      answerContent: answerDetail.value,
       answerPrice: answerPrice.value,
-      deviceId: 1
-    }, user.token, function(err, result){
-      console.log(err)
-      console.log(result)
-    })
+      deviceId: 1,
+      callback: function(err, result) {
 
-    /*
-    webapi.addAnswer({
-      question_id: questionId,
-      answer_brief: answerBrief.value,
-      answer_content: answerDetail.value,
-      price: answerPrice.value,
-      device_id: 1
-    }, user.token, function(err, result){
-      console.log(err)
-      console.log(result)
-    });
-    */
+        if (result && result.success) {
+          resetNewAnswersList('/question/'+questionId, {
+            question_id: questionId
+          })
+          browserHistory.push('/question/'+questionId+'?subnav_back=/')
+          return
+        }
+
+        if (result && !result.success) {
+          alert(result.error)
+        } else {
+          console.log(err, result)
+        }
+
+      }
+    })
 
   }
 
   render() {
 
-    const { question } = this.state
+    const [ question ] = this.props.question
 
     if (!question) {
       return (<div></div>)
     }
 
     return (<div>
-      <Nav />
+      <Subnav
+        left="取消"
+        middle="编写答案"
+      />
       <div className="container">
-        <div>{question.title}</div>
-        <div>编写答案</div>
-        <div>公开</div>
         <div>
-          <input className={styles.answerBrief} type="text" ref="answerBrief"></input>
-        </div>
-        <div>详情</div>
-        <div>
-          <textarea className={styles.answerDetail} ref="answerDetail"></textarea>
+          <textarea styleName="answerDetail" className="textarea" ref="answerDetail" placeholder="详情"></textarea>
         </div>
         <div>
           价格 <select ref="answerPrice">
@@ -123,9 +99,7 @@ class AddAnswer extends React.Component {
             <option value="9">9 ¥</option>
             <option value="10">10 ¥</option>
           </select>
-        </div>
-        <div>
-          <button className={styles.submit} onClick={this.submitQuestion}>提交</button>
+          <button className="button" onClick={this.submitQuestion}>提交</button>
         </div>
       </div>
     </div>)
@@ -134,26 +108,36 @@ class AddAnswer extends React.Component {
 }
 
 AddAnswer.propTypes = {
-  user: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired,
-  question: PropTypes.object.isRequired
+  question: PropTypes.array.isRequired,
+  addAnswer: PropTypes.func.isRequired,
+  resetNewAnswersList: PropTypes.func.isRequired
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
   return {
-    user: state.user,
-    question: state.question
+    question: getQuestionById(state, props.params.questionId)
   }
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, props) {
   return {
-    actions: bindActionCreators(actions, dispatch)
+    resetNewAnswersList: bindActionCreators(resetNewAnswersList, dispatch),
+    loadQuestionById: function(){
+      bindActionCreators(loadQuestionById, dispatch)({
+        questionId: props.params.questionId,
+        callback: function(err){
+          if (err) {
+            props.displayNotFoundPage()
+          }
+        }
+      })
+    },
+    addAnswer: bindActionCreators(addAnswer, dispatch)
   }
 }
 
+AddAnswer = CSSModules(AddAnswer, styles)
 
-// export default AddAnswer;
 export default connect(
   mapStateToProps,
   mapDispatchToProps

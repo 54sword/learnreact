@@ -1,86 +1,110 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { Router, Route, Redirect, Link, IndexLink, IndexRoute, browserHistory } from 'react-router';
-import DocumentTitle from 'react-document-title'
+import { Link, browserHistory } from 'react-router'
+import DocumentMeta from 'react-document-meta'
+
+import CSSModules from 'react-css-modules'
+import styles from './style.scss'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import * as TodoActions from '../../actions'
 
-import Nav from '../../components/nav'
+import { addQuestion } from '../../actions/questions'
+import { loadNodes } from '../../actions/nodes'
+import { getAllNodes } from '../../reducers/nodes'
 
-import styles from './index.scss'
-
-var webapi = require('../../utils/api')
+import Subnav from '../../components/subnav'
+import Shell from '../../shell'
+import Editor from '../../components/editor'
 
 class AddQuestion extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      nodes: []
+      nodes: [],
+      contentStateJSON: '',
+      contentHTML: '',
+      meta: {
+        title: '提问',
+        description: '提问'
+      }
     }
     this.submitQuestion = this.submitQuestion.bind(this)
+    this.sync = this.sync.bind(this)
   }
 
-  componentWillMount() {
-    let self = this
+  sync(contentStateJSON, contentHTML) {
+    this.state.contentStateJSON = contentStateJSON
+    this.state.contentHTML = contentHTML
+    // console.log(this.state.contentStateJSON)
+  }
 
-    let { user } = this.props
-
-    webapi.fetchAllNode(function(err, res){
-      if (res.success) {
-        self.setState({
-          nodes: res.data
-        })
-      }
-    });
+  componentDidMount() {
+    const self = this
+    const { loadNodes } = this.props
+    loadNodes({ child: 1, per_page:2000 }, function(err, result){
+      self.setState({
+        nodes: result.data
+      })
+    })
   }
 
   submitQuestion() {
-    let { questionTitle, questionDetail, questionNode } = this.refs
-    let { user } = this.props
 
-    webapi.addQuestion({
+    let self = this
+    let { questionTitle, questionNode } = this.refs
+    let { addQuestion } = this.props
+    const { contentStateJSON } = this.state
+
+    if (!questionTitle.value) {
+      questionTitle.focus()
+      return
+    }
+
+    if (!questionNode.value) {
+      alert('请选择话题分类')
+      return
+    }
+
+    addQuestion({
       title: questionTitle.value,
-      detail: questionDetail.value,
+      detail: contentStateJSON,
       nodeId: questionNode.value,
-      device: 1
-    }, user.token, function(err, res){
-      if (err) {
-        alert(err);
-        return;
+      device: 1,
+      callback: function(err, question){
+        browserHistory.push('question/'+question._id+'?subnav_back=/')
       }
-      window.location.href = './question/'+res.data._id
-    });
+    })
+
   }
 
   render() {
 
-    // Redirect(null, '/');
-
-    if (this.state.nodes.length <= 0) {
-      return (<div>loading...</div>)
-    }
+    const { nodes } = this.state
 
     return (<div>
-      <Nav />
+      <DocumentMeta {...this.state.meta} />
+      <Subnav
+        left="取消"
+        middle="创建主题"
+      />
       <div className="container">
-        <h4>提出你的问题，让更多人帮助你解答</h4>
-        <div>问题标题</div>
-        <div><input className={styles.questionTitle} ref="questionTitle" type="text"  /></div>
-        <div>问题内容</div>
-        <div><textarea className={styles.questionDetail} ref="questionDetail"></textarea></div>
-        <div>
-          <select className={styles.nodes} ref="questionNode">
-            {this.state.nodes.map(parent=>{
-              return parent.children.map(node=>{
-                return (<option value={node.id}>{node.name}</option>)
-              })
-            })}
-          </select>
+        <div styleName="addQuestion">
+          <div><input styleName="questionTitle" className="input" ref="questionTitle" type="text" placeholder="问题标题"  /></div>
+          <div>
+            <Editor syncContent={this.sync} />
+          </div>
+          <div>
+            <select ref="questionNode" styleName="nodes">
+              <option value={0}>请选择话题</option>
+              {nodes.map(node=>{
+                return (<option value={node._id} key={node._id}>{node.name}</option>)
+              })}
+            </select>
+            <button className="button" styleName="submit" onClick={this.submitQuestion}>提交</button>
+          </div>
         </div>
-        <div><button className={styles.submit} onClick={this.submitQuestion}>提交</button></div>
       </div>
     </div>)
   }
@@ -88,25 +112,26 @@ class AddQuestion extends React.Component {
 }
 
 AddQuestion.propTypes = {
-  user: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired
+  addQuestion: PropTypes.func.isRequired,
+  nodes: PropTypes.array.isRequired,
+  loadNodes: PropTypes.func.isRequired,
 }
 
 function mapStateToProps(state) {
   return {
-    user: state.user
+    nodes: getAllNodes(state)
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(TodoActions, dispatch)
+    addQuestion: bindActionCreators(addQuestion, dispatch),
+    loadNodes: bindActionCreators(loadNodes, dispatch)
   }
 }
 
+AddQuestion = CSSModules(AddQuestion, styles)
 
-// export default AddQuestion;
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AddQuestion)
+AddQuestion = connect(mapStateToProps, mapDispatchToProps)(AddQuestion)
+
+export default Shell(AddQuestion)

@@ -1,22 +1,15 @@
-import React, { Component, PropTypes } from 'react'
-import ReactDOM from 'react-dom'
-import { Link, browserHistory } from 'react-router'
+import React, { Component } from 'react'
 
-var webapi = require('../../utils/api')
+import CSSModules from 'react-css-modules'
+import styles from './style.scss'
 
-export default class Signup extends React.Component {
+class Signup extends Component {
 
   constructor(props) {
     super(props)
     this.submitSignup = this.submitSignup.bind(this)
     this.singupFailed = this.singupFailed.bind(this)
-  }
-
-  componentWillMount() {
-    // 如果已经登录，那么验证token是否有效，如果有效则跳转到首页
-    // if ($.cookie('accessToken')) {
-      // browserHistory.push('./');
-    // }
+    this.sendCaptcha = this.sendCaptcha.bind(this)
   }
 
   singupFailed(data) {
@@ -58,7 +51,7 @@ export default class Signup extends React.Component {
 
     let self = this
 
-    let { nickname, email, password, male, female } = this.refs
+    let { nickname, email, password, male, female, captcha } = this.refs
 
     const { signup } = this.props
 
@@ -68,6 +61,8 @@ export default class Signup extends React.Component {
     } else if (!email.value) {
       email.focus()
       return
+    } else if (!captcha.value) {
+      captcha.focus()
     } else if (!password.value) {
       password.focus()
       return
@@ -81,7 +76,9 @@ export default class Signup extends React.Component {
       nickname: nickname.value,
       email: email.value,
       password: password.value,
-      gender: male.checked ? 1 : 0
+      gender: male.checked ? 1 : 0,
+      source: 0,
+      captcha: captcha.value
     }, function(err, result){
       if (err) {
         self.singupFailed(err.data);
@@ -89,25 +86,49 @@ export default class Signup extends React.Component {
         alert('注册成功')
       }
     });
+  }
 
-    // return false
+  sendCaptcha() {
+    const { addCaptcha } = this.props
+    const { email } = this.refs
+
+    if (!email.value) {
+      email.focus()
+      return
+    }
+
+    addCaptcha({
+      email: email.value,
+      type: 'signup'
+    }, function(err,result){
+      console.log(err, result)
+    })
+
   }
 
   render () {
     return (
       <form onSubmit={this.submitSignup}>
         <h6>注册</h6>
-        <div>昵称 <input type="text" ref="nickname" /><div ref="nickname-meg"></div></div>
-        <div>邮箱 <input type="text" ref="email" /><div ref="email-meg"></div></div>
-        <div>密码 <input type="password" ref="password" /><div ref="password-meg"></div></div>
+        <div><input type="text" className="input" ref="nickname" placeholder="昵称" /><div ref="nickname-meg"></div></div>
+        <div><input type="text" className="input" ref="email" placeholder="邮箱" /><div ref="email-meg"></div></div>
+        <div>
+          <input type="text" className="input" styleName="captcha" placeholder="请输入验证码" ref="captcha" />
+          <input type="submit" className="button" styleName="get-captcha-button" value="获取验证码" onClick={this.sendCaptcha} />
+        </div>
+        <div><input type="password" className="input" ref="password" placeholder="密码" /><div ref="password-meg"></div></div>
         <div>性别
           <input type="radio" name="gender" ref="male" />男
           <input type="radio" name="gender" ref="female" />女
           <div ref="gender-meg"></div>
         </div>
-        <div><input type="submit" value="注册" /></div>
+        <div><input type="submit" className="button" value="注册" /></div>
       </form>
     )
   }
 
 }
+
+Signup = CSSModules(Signup, styles)
+
+export default Signup

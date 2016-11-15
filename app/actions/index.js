@@ -1,6 +1,6 @@
 import * as types from '../constants/ActionTypes'
-
 import config from '../../config/config'
+
 let apiUrl = config.API_URL
 
 export function fetchUserInfo(accessToken, callback) {
@@ -24,51 +24,6 @@ export function fetchUserInfo(accessToken, callback) {
   }
 }
 
-// 登录
-export function signin(email, password, callback) {
-  return dispatch => {
-    $.ajax({
-      url: apiUrl+'/api/v1/signin',
-      type: 'post',
-      data: {
-        email: email,
-        password: password
-      },
-      error(err) {
-        callback(err.responseJSON.error)
-      },
-      success(result) {
-        dispatch(addAccessToken(result.data.access_token))
-        callback(null)
-      }
-    })
-  };
-}
-
-// 注册
-export function signup(userinfo, callback) {
-
-  return dispatch => {
-    $.ajax({
-      url: apiUrl+'/api/v1/signup',
-      type: 'post',
-      data: {
-        nickname: userinfo.nickname,
-        email: userinfo.email,
-        password: userinfo.password,
-        gender: userinfo.gender,
-        source: userinfo.source ? userinfo.source : 0
-      },
-      error(err) {
-
-        callback(err.responseJSON)
-      },
-      success(result) {
-        callback(null, result);
-      }
-    });
-  };
-}
 
 // 添加答案
 export function addAnswer(config, accessToken, callback) {
@@ -191,4 +146,13 @@ export function setScroll(name) {
 
 export function setScrollPosition(name) {
   return { type: 'SET_SCROLL_POSITION', name }
+}
+
+
+export function setScrollPosition(name) {
+  return { type: 'SET_SCROLL_POSITION', name }
+}
+
+export function saveScrollPosition(name) {
+  return { type: 'SAVE_SCROLL_POSITION', name }
 }

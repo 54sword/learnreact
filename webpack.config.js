@@ -8,11 +8,8 @@ var ROOT_PATH = path.resolve(__dirname);
 var APP_PATH = path.resolve(ROOT_PATH, 'app');
 var BUILD_PATH = path.resolve(ROOT_PATH, 'build');
 var NODE_MODULES_PATH = path.resolve(ROOT_PATH, 'node_modules');
-var BOWER_COMPONENTS = path.resolve(ROOT_PATH, 'app/bower_components')
 
 var config = require('./config/config.js');
-
-// process.env.NODE_ENV = 'development';
 
 module.exports= {
   entry: {
@@ -29,7 +26,7 @@ module.exports= {
   },
   output: {
     path: BUILD_PATH,
-    publicPath: config.PUBLIC_PATH, // 打包文件内用到的URL路径, 比如背景图等(可以设成http的地址, 比如: http://cdn.my.com)
+    publicPath: config.PUBLIC_PATH+'/', // 打包文件内用到的URL路径, 比如背景图等(可以设成http的地址, 比如: http://cdn.my.com)
     filename: '[name].[hash].js'
   },
   //enable dev source map
@@ -50,23 +47,20 @@ module.exports= {
   },
   module: {
     loaders: [
-      { test: /\.jsx?$/, loaders: ['babel'], include: APP_PATH },
+      {
+        test: /\.jsx?$/, loaders: ['babel'], include: APP_PATH
+      },
       {
         test: /\.scss$/,
         loaders: [
-          'style',
-          'css?module&localIdentName=[hash:base64:3]&-url',
-          // 'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
-          // 'resolve-url',
-          'sass'
-        ]
+          'style?sourceMap',
+          'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
+          'resolve-url',
+          'sass?sourceMap'
+        ],
+        include: APP_PATH
       },
-      // {
-      //   test: /\.css$/,
-      //   loader: "style!css?module&localIdentName=[hash:base64:5]&-url"
-      // },
-      // { test: /\.css$/, loader: ExtractTextPlugin.extract('style', 'css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]') },
-      // { test: /\.(css|scss)$/, loader: 'style!css!sass' },
+      { test: /\.css$/, loader: 'style!css' },
       { test: /\.(png|jpg|gif)$/, loader: 'url?limit=40000' },
       { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&minetype=application/font-woff" },
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" }
@@ -91,6 +85,7 @@ module.exports= {
     // new webpack.optimize.CommonsChunkPlugin('common.[hash].js', ['app', 'vendors']),
     new HtmlwebpackPlugin({
       title: config.name,
+      public_path: config.PUBLIC_PATH + '/public',
       template: path.resolve(APP_PATH, 'views/index.html')
     }),
 

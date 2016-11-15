@@ -8,10 +8,8 @@ var ROOT_PATH = path.resolve(__dirname);
 var APP_PATH = path.resolve(ROOT_PATH, 'app');
 var BUILD_PATH = path.resolve(ROOT_PATH, 'build');
 var NODE_MODULES_PATH = path.resolve(ROOT_PATH, 'node_modules');
-var BOWER_COMPONENTS = path.resolve(ROOT_PATH, 'app/bower_components')
 
-var config = require('./app/config/config.js');
-// process.env.NODE_ENV = 'production';
+var config = require('./config/config.js');
 
 module.exports= {
   entry: {
@@ -28,13 +26,12 @@ module.exports= {
   },
   output: {
     path: BUILD_PATH,
-    publicPath: config.PUBLIC_PATH, // 打包文件内用到的URL路径, 比如背景图等(可以设成http的地址, 比如: http://cdn.my.com)
+    publicPath: config.PUBLIC_PATH+'/', // 打包文件内用到的URL路径, 比如背景图等(可以设成http的地址, 比如: http://cdn.my.com)
     filename: '[name].[hash].js'
   },
   resolve: {
     extensions: ['', '.js', '.jsx'],
     alias: {
-      // 'jquery': path.resolve(BOWER_COMPONENTS, './jquery/dist/jquery.min.js')
     }
   },
   module: {
@@ -44,13 +41,13 @@ module.exports= {
         test: /\.scss$/,
         loaders: [
           'style',
-          'css?module&localIdentName=[hash:base64:5]&-url',
-          // 'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
-          // 'resolve-url',
+          'css?modules&importLoaders=1&localIdentName=[hash:base64:5]',
+          'resolve-url',
           'sass'
-        ]
+        ],
+        include: APP_PATH
       },
-      // { test: /\.(css|scss)$/, loader: 'style!css!sass' },
+      { test: /\.css$/, loader: 'style!css' },
       { test: /\.(png|jpg|gif)$/, loader: 'url?limit=40000' },
       { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&minetype=application/font-woff" },
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" }
@@ -69,11 +66,20 @@ module.exports= {
       }
     }),
     //这个使用uglifyJs压缩你的js代码
-    new webpack.optimize.UglifyJsPlugin({minimize: true}),
+    new webpack.optimize.UglifyJsPlugin({
+      // output: {
+      //   comments: false,
+      // },
+      // minimize: true,
+      compress: {
+        warnings: false
+      }
+    }),
     //把入口文件里面的数组打包成verdors.js
     // new webpack.optimize.CommonsChunkPlugin('common.[hash].js', ['app', 'vendors']),
     new HtmlwebpackPlugin({
       title: config.name,
+      public_path: config.PUBLIC_PATH,
       template: path.resolve(APP_PATH, 'views/index.html')
     }),
     new webpack.ProvidePlugin({

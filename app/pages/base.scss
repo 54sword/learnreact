@@ -17,7 +17,20 @@ $screen-lg-min: 1200px;
   }
 }
 
-$light-gray: rgb(227, 227, 227);
+
+@mixin cursorHand {
+  cursor: hand;
+  cursor: pointer;
+}
+
+// 元素的内边距和边框不再会增加它的宽度
+@mixin boxSizing() {
+  -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+
+$light-gray: rgb(239, 239, 239);
 $blue: rgb(16, 180, 215);
 $red: rgb(222, 22, 22);
 $green: rgb(54, 200, 24);
@@ -30,16 +43,18 @@ $green: rgb(54, 200, 24);
   -webkit-animation-delay: $delay; // 延迟时间
 }
 
-// 淡出
-@-webkit-keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
+:global{
 
-/*
-@mixin boxSizing() {
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
+  // 淡出
+  @-webkit-keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+
+  @-webkit-keyframes rotate {
+    from { -webkit-transform:rotate(0deg); }
+    to { -webkit-transform:rotate(360deg); }
+  }
+
 }
-*/

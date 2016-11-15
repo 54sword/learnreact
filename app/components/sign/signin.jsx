@@ -1,8 +1,7 @@
-import React, { Component, PropTypes } from 'react'
-import ReactDOM from 'react-dom'
-// var webapi = require('../../utils/api')
+import React, { Component } from 'react'
+import { Link, browserHistory } from 'react-router'
 
-class Signin extends React.Component {
+export default class Signin extends Component {
 
   constructor(props) {
     super(props)
@@ -14,6 +13,7 @@ class Signin extends React.Component {
       }
     }
     this.signin = this.signin.bind(this)
+    this.toForgot = this.toForgot.bind(this)
   }
 
   signin(event) {
@@ -54,25 +54,12 @@ class Signin extends React.Component {
 
     });
 
-    /*
-    webapi.signin($email.value, $password.value, function(err, result){
-
-      $submit.value = '登录'
-      $submit.disabled = false
-
-      if (err) {
-        _self.setState({ error: result.error })
-        return;
-      }
-
-      if (result.success) {
-        setToken(result.data.access_token)
-        location.reload()
-      }
-    })
-    */
-
     return false;
+  }
+
+  toForgot () {
+    this.props.hideSign()
+    browserHistory.push('/forgot')
   }
 
   render () {
@@ -87,12 +74,11 @@ class Signin extends React.Component {
       <form onSubmit={this.signin}>
         {error}
         <h6>登录</h6>
-        <div>邮箱 <input type="text" ref="account" /></div>
-        <div>密码 <input type="password" ref="password" /></div>
-        <div><input type="submit" ref="submit" value="登录" /></div>
+        <div><input type="text" className="input" ref="account" placeholder="邮箱" /></div>
+        <div><input type="password" className="input"  ref="password" placeholder="密码" /></div>
+        <div><input type="submit" ref="submit" className="button" value="登录" /></div>
+        <a href="javascript:void(0);" onClick={this.toForgot}>忘记密码？</a>
       </form>
     )
   }
 }
-
-export default Signin

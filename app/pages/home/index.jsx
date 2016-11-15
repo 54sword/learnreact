@@ -1,73 +1,130 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
+import CSSModules from 'react-css-modules'
 import { Link } from 'react-router'
+import cookie from 'react-cookie'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import * as Actions from '../../actions'
+import { isSignin } from '../../reducers/sign'
+import { showSign } from '../../actions/sign'
+import { getUserInfo } from '../../reducers/user'
 
-/// ---
-
+import Shell from '../../shell'
 import Nav from '../../components/nav'
 import Questions from '../../components/questions'
+import Editor from '../../components/editor'
 
 import styles from './index.scss'
 
-class Home extends React.Component {
+class Home extends Component {
 
   constructor(props) {
-    super(props);
+    super(props)
+
+    let tab = cookie.load('tab')
+
+    this.state = {
+      currentTab: 0,
+      tabs: [
+        {
+          name:'发现',
+          filters: {
+            per_page: 20,
+            gt_create_at: new Date().getTime()
+          }
+        },
+        {
+          name:'我的关注',
+          filters: {
+            per_page: 20,
+            gt_create_at: new Date().getTime(),
+            method: 'user_custom'
+          }
+        }
+      ]
+    }
+
+    if (tab && this.state.tabs[tab]) {
+      this.state.currentTab = tab
+    }
+
+    this.toTab = this.toTab.bind(this)
+  }
+
+  toTab(key) {
+    this.setState({
+      currentTab: key
+    })
+
+    cookie.save('tab', key, { expires: new Date( new Date().getTime() + 1000*60*60*24*365 ), path: '/' })
   }
 
   render() {
-    const { user, question, actions } = this.props
-
-
+    const { isSignin, showSign, followPeoples } = this.props
+    const { currentTab, tabs } = this.state
 
     return (
       <div>
         <Nav />
+        {isSignin ?
+          <div className="container">
+            <div styleName="tab">
+              {tabs.map((tab, key) => {
+                return (<a href="javascript:void(0)" key={key} onClick={()=>{this.toTab(key)}} className={currentTab == key ? 'active' : ''}>{tab.name}</a>)
+              })}
+            </div>
+          </div>
+        : null}
+
         <div className="container">
-          {user.userinfo ? <div><Link to="/add-question" className={styles.addQuestion}>提问</Link></div> : ''}
-          <Questions
-            questions={question}
-            actions={actions}
-          />
+          {isSignin ?
+            <div>
+              <Link to="/add-question" styleName="addQuestion">你对什么事物感到好奇？</Link>
+            </div>
+            :
+            <a href="javascript:;" styleName="addQuestion" onClick={showSign}>你对什么事物感到好奇？</a>}
         </div>
+
+
+
+        <Questions
+          name="home"
+          filters={tabs[currentTab].filters}
+          update={currentTab}
+        />
+
       </div>
-    );
+    )
   }
 
-  componentDidMount() {
-    this.props.actions.setScrollPosition('home')
-  }
-
-  componentWillUnmount() {
-    this.props.actions.setScroll('home')
-  }
 }
 
 Home.propTypes = {
-  user: PropTypes.object.isRequired,
-  question: PropTypes.object.isRequired,
-  actions: PropTypes.object.isRequired
+  isSignin: PropTypes.bool.isRequired,
+  showSign: PropTypes.func.isRequired,
+  userProfile: PropTypes.object.isRequired,
+  followPeoples: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => {
   return {
-    scroll: state.scroll,
-    user: state.user,
-    question: state.question
+    isSignin: isSignin(state),
+    userProfile: getUserInfo(state),
+    followPeoples: function(){
+      return state.user.followPeoples.join(',')
+    }
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    actions: bindActionCreators(Actions, dispatch)
+    showSign: bindActionCreators(showSign, dispatch)
   }
 }
+Home = CSSModules(Home, styles)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Home)
+Home = connect(mapStateToProps, mapDispatchToProps)(Home)
+
+
+export default Shell(Home)

@@ -1,65 +1,43 @@
-/*
-import { ADD_TODO, DELETE_TODO, EDIT_TODO, COMPLETE_TODO, COMPLETE_ALL, CLEAR_COMPLETED } from '../constants/ActionTypes'
-*/
 
-import { ADD_ACCESS_TOKEN } from '../constants/ActionTypes'
-
-import cookie from 'react-cookie';
+import merge from 'lodash/merge'
 
 let initialState = {
-  token: null,
-  userinfo: null,
-  showSigninBox: false
+  profile: {},
+  followPeoples: [],
+  unreadNotice: 0
 }
 
-export default function todos(state = initialState, action) {
+export default function user(state = initialState, action) {
 
   switch (action.type) {
 
     case 'SET_USER':
-      state.userinfo = action.userinfo
-      return state
+      state.profile = action.userinfo
+      return merge({}, state, {})
 
-    case ADD_ACCESS_TOKEN:
-      state.token = action.token
-      // 保存token，保持登录状态
-      // $.cookie('accessToken', state.token, { expires: 7, path: '/' })
-      cookie.save('accessToken', state.token, { expires: new Date( new Date().getTime() + 1000*60*60*24*7 ), path: '/' })
-      return state
-    case 'REMOVE_COOKIE':
-      // 保存token，保持登录状态
-      // $.removeCookie('accessToken', { path: '/' })
-      cookie.remove('accessToken', { path: '/' })
-      return state
+    case 'ADD_FOLLOW_PEOPLES':
+      state.followPeoples = action.peoples
+      return merge({}, state, {})
 
-    case 'SIGNIN_PENDING':
-      console.log(action)
-      // state.token = action.token
-      // 保存token，保持登录状态
-      // $.cookie('accessToken', state.token, { expires: 7, path: '/' })
-      return state
-    case 'SIGNIN_FULFILLED':
-      console.log(action)
-      return state
+    case 'SET_UNREAD_NOTICE':
+      state.unreadNotice = action.unreadNotice
+      return merge({}, state, {})
 
-    case 'SIGNIN':
-
-      console.log(action.status)
-      // state.token = action.token
-      // 保存token，保持登录状态
-      // $.cookie('accessToken', state.token, { expires: 7, path: '/' })
-      return state
-    case 'SIGNOUT':
-      state.token = null
-      // $.removeCookie('accessToken')
-      cookie.remove('accessToken')
-      return state
-
-    case 'SHOW_SIGNIN_BOX':
-      state.showSigninBox = action.show
-      return state
     default:
       return state
   }
 
+}
+
+export function getUserInfo(state) {
+  return state.user.profile || {}
+}
+
+export function getFollowStatusByPeopleId(state, peopleId) {
+  let followList = state.user.followPeoples
+  return followList.indexOf(peopleId) == -1 ? false : true
+}
+
+export function getUnreadNotice(state) {
+  return state.user.unreadNotice || 0
 }

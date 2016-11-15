@@ -7,6 +7,7 @@ export default function configureStore(preloadedState) {
 
   const middleware = process.env.NODE_ENV === 'production' ?
     [ thunk ] :
+    // [ thunk ]
     [ thunk, logger() ]
 
   const store = createStore(

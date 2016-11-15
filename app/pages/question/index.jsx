@@ -2,166 +2,143 @@ import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { Link } from 'react-router'
 
+import Device from '../../common/device'
+
+// import {Editor, EditorState, RichUtils, Entity, AtomicBlockUtils, convertToRaw, CompositeDecorator, convertFromRaw} from 'draft-js'
+
+import CSSModules from 'react-css-modules'
+import styles from './style.scss'
+
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-import * as TodoActions from '../../actions'
-var webapi = require('../../utils/api')
+import { showSign } from '../../actions/sign'
+import { isSignin } from '../../reducers/sign'
+import { loadQuestionById } from '../../actions/questions'
+import { getQuestionById } from '../../reducers/questions'
 
-import Nav from '../../components/nav'
+import Shell from '../../shell'
+import Subnav from '../../components/subnav'
+import Answers from '../../components/answers'
+import FollowQuestion from '../../components/follow-question'
+// import Iframe from 'react-iframe'
+import Embed from '../../components/embed'
+import Iframe from '../../components/iframe'
 
-import styles from './index.scss'
-
+import Editor from '../../components/editor'
 
 class Question extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = {
-      question: null,
-      answers: []
-    }
-    this.fetchAnswers = this.fetchAnswers.bind(this)
-  }
-
-  fetchAnswers(questionId) {
-
-    var _self = this;
-
-    webapi.fetchAnswers(questionId, function(err, result){
-      if (err) {
-        console.log(err)
-        return;
-      }
-      if (result && result.success) {
-        _self.setState({
-          "answers": result.data
-        });
-      }
-
-      // console.log(result)
-
-    });
-
   }
 
   componentWillMount() {
 
-    console.log('我进入问题页面了')
+    const { loadQuestionById } = this.props
+    let [ question ] = this.props.question
 
-    let _self = this
-    let questionId = _self.props.params.questionId
-
-    const { question, actions } = this.props
-
-    for (var i = 0, max = question.questions.length; i < max; i++) {
-      if (question.questions[i]._id == questionId) {
-
-        _self.setState({
-          question: question.questions[i]
-        });
-
-        _self.fetchAnswers(questionId);
-
-        return;
-      }
+    if (!question) {
+      loadQuestionById()
     }
-
-    // 如果数据流中没有对应的问题，那么从服务器上获取
-    webapi.fetchQuestionById(questionId, function(err, result){
-      if (err) {
-        console.log(err);
-        return;
-      }
-      if (result && result.success) {
-        _self.setState({
-          "question": result.data.question
-        });
-        _self.fetchAnswers(questionId);
-      }
-    });
-
   }
 
   render () {
 
-    const { question, answers } = this.state
+    let { isSignin, showSign } = this.props
+    let [ question ] = this.props.question
 
     if (!question) {
-      return (<div>问题不存在</div>)
+      return (<div>loading...</div>)
     }
-
-    // <DocumentTitle title={question.title}>
 
     return (
 
       <div>
-        <Nav />
+        <Subnav
+          left="返回"
+          middle="内容正文"
+        />
 
         <div className="container">
 
-          <div className={styles.question}>
-            <div className={styles.questionHeader}>
-              <Link to={`user/${question.user_id._id}`}>
+          <div styleName="question">
+            <div styleName="questionHeader">
+              <Link to={`/people/${question.user_id._id}`}>
                 <img src={question.user_id.avatar_url} />
                 {question.user_id.nickname}
               </Link>
             </div>
-            <div className={styles.questionTitle}>
+            <div styleName="questionTitle">
               <h1>{question.title}</h1>
             </div>
-            <div className={styles.questionDetail}>{question.content}</div>
-          </div>
-
-          <div className={styles.other}>
-            {question.answers_count} 个答案 <Link to={`/add-answer/${question._id}`}>写答案</Link>
-          </div>
-
-          <div>
-            <div className={styles.answers}>
-            {answers.map((answer)=>{
-              return(
-                <div className={styles.answerItem} key={answer._id}>
-                  <div className={styles.answerHeader}>
-                    <img className="user-avatar" src={answer.user_id.avatar_url} />
-                    {answer.user_id.nickname} {answer.user_id.brief}
-                  </div>
-                  <div className={styles.answersDetail}>
-                    <div>{answer.brief}</div>
-                    <Link to={`/answer/${answer._id}`}>¥{answer.price} 查看答案</Link>
-                  </div>
-                </div>
-              )
-            })}
+            <div styleName="questionDetail">
+              <Editor readOnly={true} content={question.content} />
             </div>
           </div>
+
+          <div styleName="other">
+            {question.answers_count} 个答案
+
+            <FollowQuestion
+              count={question.follow_count}
+              status={question.follow}
+              questionId={question._id}
+              autherId={question.user_id._id}
+            />
+
+            {isSignin ?
+              <Link to={`/add-answer/${question._id}`}>写答案</Link> :
+              <a href="javascript:;" onClick={showSign}>写答案</a>
+            }
+          </div>
+
+          <Answers
+            name={this.props.location.pathname}
+            filters={{ question_id: this.props.params.questionId }}
+          />
+
         </div>
 
       </div>
-    );
+    )
   }
 }
 
 Question.propTypes = {
+  showSign: PropTypes.func.isRequired,
+  isSignin: PropTypes.bool.isRequired,
+  loadQuestionById: PropTypes.func.isRequired,
   question: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
   return {
-    question: state.question
+    isSignin: isSignin(state),
+    question: getQuestionById(state, props.params.questionId)
   }
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, props) {
+
   return {
-    actions: bindActionCreators(TodoActions, dispatch)
+    showSign: bindActionCreators(showSign, dispatch),
+    loadQuestionById: function(){
+      bindActionCreators(loadQuestionById, dispatch)({
+        questionId: props.params.questionId,
+        callback: function(err){
+          if (err) {
+            props.displayNotFoundPage()
+          }
+        }
+      })
+    }
   }
+
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Question)
+Question = CSSModules(Question, styles)
 
-// export default Question
+let QuestionComponent = connect(mapStateToProps, mapDispatchToProps)(Question)
+
+export default Shell(QuestionComponent)

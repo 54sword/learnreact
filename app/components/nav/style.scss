@@ -1,0 +1,70 @@
+@import "../../pages/base.scss";
+
+.header{
+  position: fixed;
+  top:0;
+  background-color: #fff;
+  height: 50px;
+  line-height: 50px;
+  width: 100%;
+  box-shadow: 0 0 10px rgba(0,0,0,.1);
+
+  > div{
+    max-width: 770px;
+    margin:0 auto;
+  }
+
+  @include respond-to(sm) {
+    top: auto;
+    bottom:0;
+  }
+
+  ul{
+    list-style-type: none;
+    padding:0px;
+    margin:0px;
+
+    li{
+      float:left;
+      width:25%;
+
+      a{
+        display: block;
+        height: 100%;
+        width: 100%;
+        text-align: center;
+
+        &:hover{
+          // color: rgb(7, 128, 227);
+          // background-color: #efefef;
+        }
+      }
+    }
+  }
+
+  :global .three{
+    li{
+      width:33.333%;
+    }
+  }
+}
+
+.active{
+  color: rgb(7, 128, 227);
+}
+
+.placeholder{
+  height: 60px;
+  width: 100%;
+
+  @include respond-to(sm) {
+    display: none;
+  }
+
+}
+
+@include respond-to(sm) {
+  body{
+    padding:0 0 50px 0;
+  }
+}
