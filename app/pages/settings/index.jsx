@@ -13,11 +13,19 @@ import Subnav from '../../components/subnav'
 
 import { Countdown } from '../../common/date'
 
+import Shell from '../../shell'
+
 class Settings extends Component {
 
   constructor(props) {
     super(props)
     this.handleSignout = this.handleSignout.bind(this)
+  }
+
+  componentWillMount() {
+    this.props.setMeta({
+      title: '设置'
+    })
   }
 
   handleSignout() {
@@ -83,7 +91,7 @@ class Settings extends Component {
             <Link className="arrow avatar" to="/settings/reset-avatar">
               头像
               <span className="right">
-                <img src={user.avatar_url} />
+                <img src={user.avatar_url} styleName="avatar" />
               </span>
             </Link>
             {resetNickname}
@@ -140,7 +148,6 @@ function mapDispatchToProps(dispatch) {
 
 Settings = CSSModules(Settings, styles)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Settings)
+Settings = connect(mapStateToProps, mapDispatchToProps)(Settings)
+
+export default Shell(Settings)

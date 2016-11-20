@@ -9,7 +9,7 @@ import { loadUserInfo } from '../../actions/user'
 import { bindingEmail } from '../../actions/account'
 import { addCaptcha } from '../../actions/captcha'
 
-
+import Shell from '../../shell'
 import Subnav from '../../components/subnav'
 
 class BindingEmail extends Component {
@@ -26,6 +26,10 @@ class BindingEmail extends Component {
   componentDidMount() {
     const { email } = this.refs
     email.focus()
+
+    this.props.setMeta({
+      title: '绑定邮箱'
+    })
   }
 
   submit() {
@@ -144,9 +148,6 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-// BindingEmail = CSSModules(BindingEmail, styles)
+BindingEmail = connect(mapStateToProps, mapDispatchToProps)(BindingEmail)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(BindingEmail)
+export default Shell(BindingEmail)

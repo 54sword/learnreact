@@ -7,7 +7,8 @@
     "dev": "NODE_ENV=development webpack-dev-server --progress --profile --colors --hot",
     "build": "NODE_ENV=production webpack --progress --profile --colors --config webpack.production.config.js",
     "test": "karma start",
-    "server": "PORT=8080 node server.js"
+    "server": "PORT=8080 node server.js",
+    "size": "webpack --display-modules --sort-modules-by size"
   },
   "author": "",
   "license": "ISC",
@@ -37,6 +38,7 @@
     "react-document-meta": "^2.0.3",
     "react-dom": "^15.1.0",
     "react-fileupload": "^2.4.0",
+    "react-ga": "^2.1.2",
     "react-redux": "^4.4.5",
     "react-router": "^2.4.1",
     "react-transform-catch-errors": "^1.0.2",

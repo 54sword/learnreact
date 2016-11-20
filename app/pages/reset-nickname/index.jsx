@@ -10,11 +10,19 @@ import { resetNickname, loadUserInfo } from '../../actions/user'
 
 import Subnav from '../../components/subnav'
 
+import Shell from '../../shell'
+
 class ResetNickname extends Component {
 
   constructor(props) {
     super(props)
     this.submitResetPassword = this.submitResetPassword.bind(this)
+  }
+
+  componentWillMount() {
+    this.props.setMeta({
+      title: '修改名字'
+    })
   }
 
   componentDidMount() {
@@ -98,9 +106,6 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-// ResetNickname = CSSModules(ResetNickname, styles)
+ResetNickname = connect(mapStateToProps, mapDispatchToProps)(ResetNickname)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ResetNickname)
+export default Shell(ResetNickname)

@@ -3,17 +3,24 @@ import React, { Component, PropTypes } from 'react'
 import CSSModules from 'react-css-modules'
 import styles from './style.scss'
 
-import Subnav from '../../components/subnav'
-
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { addComment } from '../../actions/comment'
+
+import Shell from '../../shell'
+import Subnav from '../../components/subnav'
 
 class CommentsList extends Component {
 
   constructor(props) {
     super(props)
     this.submitComment = this.submitComment.bind(this)
+  }
+
+  componentWillMount() {
+    this.props.setMeta({
+      title: '写评论'
+    })
   }
 
   submitComment() {
@@ -44,11 +51,11 @@ class CommentsList extends Component {
     return (<div>
       <Subnav
         left="取消"
-        middle="编写评论"
+        middle="写评论"
         right={(<a href="javascript:void(0);" onClick={this.submitComment}>提交</a>)}
       />
       <div className="container">
-      
+
         <div styleName="write-reply">
           <textarea ref="comment"></textarea>
         </div>
@@ -82,4 +89,4 @@ function mapDispatchToProps(dispatch, props) {
 CommentsList = CSSModules(CommentsList, styles)
 CommentsList = connect(mapStateToProps, mapDispatchToProps)(CommentsList)
 
-export default CommentsList
+export default Shell(CommentsList)

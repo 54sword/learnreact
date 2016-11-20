@@ -1,92 +1,32 @@
-@import "../../pages/base.scss";
-
-.addQuestion{
-  padding:0px;
-}
-
-
-.questionTitle{
-  width: 100%;
-  // height: 135px;
-  border-radius: 0px;
-  border:0px;
-  border-bottom:1px solid #d8d8d8;
-}
-
-.questionDetail{
-  width:100%;
-  // min-height: 150px;
-  border-radius: 0px;
-  border: none;
-  border-bottom:1px solid #d8d8d8;
-}
+// @import "../../pages/base.scss";
 
 .media-tools{
+  background-color: #fff;
+  border-bottom:1px solid #efefef;
   > span{
     display: inline-block;
-    margin-right:10px;
+    padding:5px;
+    margin:10px 0 10px 10px;
   }
 }
-
-.text-tools{
-
-  border-bottom:1px solid #efefef;
-
-  :global .RichEditor-controls{
-
-    display: inline-block;
-  }
-
-  :global {
-
-    .RichEditor-styleButton{
-      padding:5px;
-      margin-right:5px;
-      border-radius: 3px;
-    }
-
-  }
-
-  :global .RichEditor-activeButton{
-    background-color: $blue;
-    color:#fff;
-  }
-}
-
-
-:global{
-  .show{
-
-    .public-DraftEditor-content{
-      > div{
-        min-height: auto;
-      }
-    }
-
-    .DraftEditor-root{
-      padding:10px 0 10px 0;
-    }
-    .public-DraftStyleDefault-block{
-      height: 10px;
-    }
-  }
-}
-
 
 
 .draft{
+  :global{
+    .DraftEditor-root{
+      padding:10px;
+    }
+    .public-DraftEditor-content{
+      min-height:300px;
+    }
+  }
+}
+
+/*
+.draft{
 
   display: block;
-
-  margin-top:10px;
-
-  // background-color: #fff;
-  // padding: 20px;
-  // width: 600px;
-  // margin-bottom:10px !important;
-
-
-
+  margin:10px 0 10px 0;
 
   :global {
 
@@ -94,7 +34,7 @@
       margin:0px !important;
       padding:0px !important;
       > div{
-        min-height: 200px;
+        // min-height: 200px;
       }
     }
 
@@ -118,11 +58,6 @@
 
   img, embed, iframe{
     width:100%;
-    // padding-right: 40%;
-    // box-shadow: 0 2px 4px rgba(0,0,0,.1);
-  }
-
-  iframe{
     border:none;
   }
 
@@ -135,3 +70,32 @@
 
   }
 }
+
+
+
+// 展现的时候
+.show{
+
+  :global{
+
+    .public-DraftEditor-content{
+      min-height: 100%;
+      > div{
+        // min-height: auto;
+      }
+    }
+
+    .DraftEditor-root{
+      padding:0px;
+    }
+    .public-DraftStyleDefault-block{
+      height: 10px;
+    }
+
+    .RichEditor-editor{
+      border:none !important;
+    }
+
+  }
+}
+*/

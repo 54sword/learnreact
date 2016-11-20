@@ -36,3 +36,21 @@ export function signup({ data, callback }) {
   })
 
 }
+
+
+export function signupEmailVerify({ code, callback }) {
+
+  AJAX({
+    url: '/api/v1/signup-email-verify',
+    type: 'post',
+    data: { code: code },
+    callback: (result) => {
+      if (result.success) {
+        callback(null, result)
+      } else {
+        callback(true, result)
+      }
+    }
+  })
+
+}

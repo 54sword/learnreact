@@ -26,6 +26,12 @@ class ResetAvatar extends Component {
     this.submitResetPassword = this.submitResetPassword.bind(this)
   }
 
+  componentWillMount() {
+    this.props.setMeta({
+      title: '头像'
+    })
+  }
+
   submitResetPassword() {
 
     const self = this

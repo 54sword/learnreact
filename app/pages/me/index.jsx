@@ -8,12 +8,23 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { getUserInfo } from '../../reducers/user'
 
+import Shell from '../../shell'
 import Nav from '../../components/nav'
 
 class Me extends Component {
 
   constructor(props) {
     super(props)
+  }
+
+  componentWillMount() {
+
+    const { user } = this.props
+
+    this.props.setMeta({
+      title: user.nickname
+    })
+
   }
 
   render() {
@@ -28,23 +39,15 @@ class Me extends Component {
           <div styleName="header">
             <img src={user.avatar_url.replace(/thumbnail/, "large")} />
             <div>{user.nickname}</div>
-            {/*
-            <br />
-            <div styleName="follow">
-              <div><b>{user.follow_count}</b><br /><span>关注</span></div>
-              <div><b>{user.node_follow_count}</b><br /><span>关注话题</span></div>
-              <div><b>{user.fans_count}</b><br /><span>关注者</span></div>
-            </div>
-            */}
           </div>
 
           <div className="list">
-            <Link className="arrow" to="/me/questions">我的主题 <span className="right">{user.question_count}</span></Link>
+            <Link className="arrow" to="/me/questions">我的提问 <span className="right">{user.question_count}</span></Link>
             <Link className="arrow" to="/me/answers">我编写的答案 <span className="right">{user.comment_total}</span></Link>
           </div>
 
           <div className="list">
-            <Link className="arrow" to="/me/follow-nodes">我关注的话题
+            <Link className="arrow" to="/me/follow-nodes">我加入的社群
               <span className="right">{user.follow_node_count}</span>
             </Link>
             <Link className="arrow" to="/me/follow-peoples">我关注的人
@@ -84,7 +87,6 @@ function mapDispatchToProps(dispatch) {
 
 Me = CSSModules(Me, styles)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Me)
+Me = connect(mapStateToProps, mapDispatchToProps)(Me)
+
+export default Shell(Me)

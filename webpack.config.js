@@ -18,6 +18,7 @@ module.exports= {
     ],
     //添加要打包在vendors里面的库
     vendors: [
+      'jquery'
       // path.resolve(BOWER_COMPONENTS, './jquery.cookie/jquery.cookie.js'),
 
       // path.resolve(BOWER_COMPONENTS, './bootstrap/dist/css/bootstrap.min.css'),
@@ -29,6 +30,7 @@ module.exports= {
     publicPath: config.PUBLIC_PATH+'/', // 打包文件内用到的URL路径, 比如背景图等(可以设成http的地址, 比如: http://cdn.my.com)
     filename: '[name].[hash].js'
   },
+
   //enable dev source map
   devtool: 'eval-source-map',
   //enable dev server
@@ -82,7 +84,7 @@ module.exports= {
     //这个使用uglifyJs压缩你的js代码
     // new webpack.optimize.UglifyJsPlugin({minimize: true}),
     //把入口文件里面的数组打包成verdors.js
-    // new webpack.optimize.CommonsChunkPlugin('common.[hash].js', ['app', 'vendors']),
+    new webpack.optimize.CommonsChunkPlugin('common.[hash].js', ['app', 'vendors']),
     new HtmlwebpackPlugin({
       title: config.name,
       public_path: config.PUBLIC_PATH + '/public',

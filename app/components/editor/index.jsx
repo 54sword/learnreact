@@ -6,7 +6,8 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { getAccessToken } from '../../reducers/sign'
 
-import { Editor, EditorState, RichUtils, Entity, AtomicBlockUtils, convertToRaw, convertFromRaw, CompositeDecorator } from 'draft-js';
+import { Editor, EditorState, RichUtils, Entity, AtomicBlockUtils, convertToRaw, convertFromRaw, CompositeDecorator } from 'draft-js'
+
 import FileUpload from '../../components/file-upload'
 
 import CSSModules from 'react-css-modules'
@@ -18,6 +19,7 @@ import './RichEditor.css'
 import Device from '../../common/device'
 import Embed from '../../components/embed'
 import Iframe from '../../components/iframe'
+
 
 function getBlockStyle(block) {
   switch (block.getType()) {
@@ -46,7 +48,7 @@ class StyleButton extends React.Component {
       <span className={className} onMouseDown={this.onToggle}>
         {this.props.label}
       </span>
-    );
+    )
   }
 }
 
@@ -57,7 +59,7 @@ const BLOCK_TYPES = [
   // {label: 'H4', style: 'header-four'},
   // {label: 'H5', style: 'header-five'},
   // {label: 'H6', style: 'header-six'},
-  {label: 'Title', style: 'header-five'},
+  // {label: 'Title', style: 'header-five'},
   {label: 'Blockquote', style: 'blockquote'},
   {label: 'UL', style: 'unordered-list-item'},
   {label: 'OL', style: 'ordered-list-item'},
@@ -294,9 +296,13 @@ class MyEditor extends React.Component {
 
     if (syncContent) {
       const content = editorState.getCurrentContent()
+
+      if (!content.hasText()) {
+        syncContent(JSON.stringify({}), '')
+        return
+      }
       syncContent(JSON.stringify(convertToRaw(content)), '')
     }
-
   }
 
   _toggleBlockType(blockType) {
@@ -414,7 +420,7 @@ class MyEditor extends React.Component {
     let className = 'RichEditor-editor';
 
     if (readOnly) {
-      return (<div styleName="draft" className={className + ' show'}>
+      return (<div className={className}>
         <Editor
           blockRendererFn={mediaBlockRenderer}
           editorState={editorState}
@@ -441,25 +447,11 @@ class MyEditor extends React.Component {
               </span>
             </div>
 
-            <div styleName="text-tools">
-
-              <Controls
-                editorState={editorState}
-                toggleBlockType={this.toggleBlockType}
-                toggleInlineStyle={this.toggleInlineStyle}
-              />
-
-              {/*
-              <BlockStyleControls
-                editorState={editorState}
-                onToggle={this.toggleBlockType}
-              />
-              <InlineStyleControls
-                editorState={editorState}
-                onToggle={this.toggleInlineStyle}
-              />
-              */}
-            </div>
+            <Controls
+              editorState={editorState}
+              toggleBlockType={this.toggleBlockType}
+              toggleInlineStyle={this.toggleInlineStyle}
+            />
 
             <Editor
               blockRendererFn={mediaBlockRenderer}

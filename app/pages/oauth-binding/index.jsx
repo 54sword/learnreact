@@ -22,6 +22,15 @@ class OauthBinding extends Component {
     this.unbinding = this.unbinding.bind(this)
   }
 
+  componentWillMount() {
+
+    const { source } = this.props.params
+
+    this.props.setMeta({
+      title: source == 'qq' ? '绑定QQ' : '绑定微博'
+    })
+  }
+
   binding() {
     const { accessToken } = this.props
     const { source } = this.props.params
@@ -63,13 +72,13 @@ class OauthBinding extends Component {
 
       return (
         <div>
-          <Subnav middle="修改性别" />
+          <Subnav middle={source == 'qq' ? '绑定QQ' : '绑定微博'} />
           <div className="container">
             <div className="list">
               {me[source] ?
                 <a href="javascript:void(0)" onClick={this.unbinding}>解除绑定</a>
                 :
-                <a href="javascript:void(0)" onClick={this.binding}>绑定</a>
+                <a href="javascript:void(0)" onClick={this.binding}>提交绑定</a>
               }
             </div>
           </div>
@@ -78,7 +87,6 @@ class OauthBinding extends Component {
 
     } else {
       displayNotFoundPage()
-      // return(<div></div>)
     }
 
   }
@@ -112,10 +120,7 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-OauthBinding = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(OauthBinding)
+OauthBinding = connect(mapStateToProps, mapDispatchToProps)(OauthBinding)
 
 
 export default Shell(OauthBinding)

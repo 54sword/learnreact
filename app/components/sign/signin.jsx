@@ -40,13 +40,13 @@ export default class Signin extends Component {
     $submit.value = '登录中...'
     $submit.disabled = true
 
-    signin($email.value, $password.value, function(err){
+    signin($email.value, $password.value, function(err, result){
 
       $submit.value = '登录'
       $submit.disabled = false
 
-      if (err) {
-        _self.setState({ error: err })
+      if (!result.success) {
+        _self.setState({ error: result.error })
         return;
       }
 

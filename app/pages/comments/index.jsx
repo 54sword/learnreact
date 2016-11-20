@@ -21,6 +21,14 @@ class Comments extends Component {
     this.addComment = this._addComment.bind(this)
   }
 
+  componentWillMount() {
+
+    this.props.setMeta({
+      title: '评论'
+    })
+
+  }
+
   _addComment() {
     const { isSignin, showSign } = this.props
     const { answerId } = this.props.params
@@ -30,6 +38,7 @@ class Comments extends Component {
     } else {
       showSign()
     }
+
   }
 
   render() {
@@ -41,7 +50,7 @@ class Comments extends Component {
         middle="全部评论"
         right={(<a href="javascript:void(0);" onClick={this.addComment}>添加评论</a>)}
       />
-      
+
       <CommentList
         filters={{
           answer_id: answerId,

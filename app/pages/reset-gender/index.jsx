@@ -9,11 +9,19 @@ import { resetGender, loadUserInfo } from '../../actions/user'
 
 import Subnav from '../../components/subnav'
 
+import Shell from '../../shell'
+
 class ResetGender extends Component {
 
   constructor(props) {
     super(props)
     this.submitResetGender = this.submitResetGender.bind(this)
+  }
+
+  componentWillMount() {
+    this.props.setMeta({
+      title: '修改性别'
+    })
   }
 
   submitResetGender(isMale) {
@@ -83,9 +91,6 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-// ResetGender = CSSModules(ResetGender, styles)
+ResetGender = connect(mapStateToProps, mapDispatchToProps)(ResetGender)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ResetGender)
+export default Shell(ResetGender)

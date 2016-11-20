@@ -20,7 +20,7 @@ class FollowNode extends Component {
   follow(e) {
 
     e.preventDefault()
-
+    
     const { node, loadFollowNodes,
             unfollowNode, followNode, deleteQuestionList, callback
           } = this.props
@@ -30,13 +30,13 @@ class FollowNode extends Component {
     handleFollow({
       id: node._id,
       callback: (err, result) => {
-
+        /*
         if (result && result.success) {
           // 更新首页问题列表
           deleteQuestionList({ name: 'home' })
-          callback(node.follow ? false : true)
+          // callback(node.follow ? false : true)
         }
-
+        */
       }
     })
 

@@ -10,10 +10,18 @@ import { getUserInfo } from '../../reducers/user'
 import Subnav from '../../components/subnav'
 import Questions from '../../components/questions'
 
+import Shell from '../../shell'
+
 class MeQuestions extends Component {
 
   constructor(props) {
     super(props)
+  }
+
+  componentWillMount() {
+    this.props.setMeta({
+      title: '我的提问'
+    })
   }
 
   render() {
@@ -63,7 +71,6 @@ function mapDispatchToProps(dispatch, props) {
 
 MeQuestions = CSSModules(MeQuestions, styles)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MeQuestions)
+MeQuestions = connect(mapStateToProps, mapDispatchToProps)(MeQuestions)
+
+export default Shell(MeQuestions)

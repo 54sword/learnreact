@@ -1,8 +1,5 @@
 import React, { Component, PropTypes } from 'react'
 
-// import CSSModules from 'react-css-modules'
-// import styles from './style.scss'
-
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { getUserInfo } from '../../reducers/user'
@@ -11,10 +8,18 @@ import Subnav from '../../components/subnav'
 import Questions from '../../components/questions'
 import NodeList from '../../components/node-list'
 
+import Shell from '../../shell'
+
 class MeQuestions extends Component {
 
   constructor(props) {
     super(props)
+  }
+
+  componentWillMount() {
+    this.props.setMeta({
+      title: '我加入的社群'
+    })
   }
 
   render() {
@@ -27,14 +32,8 @@ class MeQuestions extends Component {
 
     return (
       <div>
-        <Subnav
-          left="返回"
-          middle="我关注的话题"
-        />
-        <NodeList
-          userId={me._id}
-        />
-
+        <Subnav left="返回" middle="我加入的社群" />
+        <NodeList name={me._id} userId={me._id} />
       </div>
     )
 
@@ -57,9 +56,6 @@ function mapDispatchToProps(dispatch, props) {
   }
 }
 
-// MeQuestions = CSSModules(MeQuestions, styles)
+MeQuestions = connect(mapStateToProps, mapDispatchToProps)(MeQuestions)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MeQuestions)
+export default Shell(MeQuestions)

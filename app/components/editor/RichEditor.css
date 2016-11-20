@@ -1,3 +1,36 @@
+
+
+/* 内容样式 */
+
+.DraftEditor-root figure{
+  margin:0;
+}
+
+.DraftEditor-root img,
+.DraftEditor-root embed,
+.DraftEditor-root iframe{
+  width:100%;
+  border:none;
+  background-color: #efefef;
+}
+
+.DraftEditor-root embed, .DraftEditor-root iframe{
+  height: 460px;
+}
+
+@media only screen and (max-width: 768px) {
+  .DraftEditor-root embed, .DraftEditor-root iframe{
+    height: 216px;
+  }
+}
+
+
+/* 内容样式 end */
+
+.DraftEditor-root{
+  background-color: #fff;
+}
+
 .RichEditor-root {
   background: #fff;
   border: 1px solid #ddd;
@@ -7,20 +40,20 @@
 }
 
 .RichEditor-editor {
-  border-top: 1px solid #ddd;
+  /*border-top: 1px solid #ddd;*/
   cursor: text;
   font-size: 16px;
-  margin-top: 10px;
+  /*margin-top: 10px;*/
 }
 
 .RichEditor-editor .public-DraftEditorPlaceholder-root,
 .RichEditor-editor .public-DraftEditor-content {
-  margin: 0 -15px -15px;
-  padding: 15px;
+  /*margin: 0 -15px -15px;*/
+  /*padding: 15px;*/
 }
 
 .RichEditor-editor .public-DraftEditor-content {
-  min-height: 100px;
+  /*min-height: 100px;*/
 }
 
 .RichEditor-hidePlaceholder .public-DraftEditorPlaceholder-root {
@@ -46,18 +79,27 @@
 .RichEditor-controls {
   font-family: 'Helvetica', sans-serif;
   font-size: 14px;
-  margin-bottom: 5px;
   user-select: none;
+  background-color: #fff;
+  border-bottom:1px solid #efefef;
 }
 
 .RichEditor-styleButton {
   color: #999;
   cursor: pointer;
-  margin-right: 16px;
-  padding: 2px 0;
   display: inline-block;
+
+  padding:5px;
+  margin:10px 0 10px 10px;
+  border-radius: 3px;
+}
+
+.RichEditor-styleButton:hover{
+  color: #999;
+  background-color: #efefef;
 }
 
 .RichEditor-activeButton {
-  color: #5890ff;
+  background-color: #5890ff !important;
+  color:#fff !important;
 }

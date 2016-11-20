@@ -8,12 +8,19 @@ import { getUserInfo } from '../../reducers/user'
 import { resetBrief, loadUserInfo } from '../../actions/user'
 
 import Subnav from '../../components/subnav'
+import Shell from '../../shell'
 
 class ResetBrief extends Component {
 
   constructor(props) {
     super(props)
     this.submitResetBrief = this.submitResetBrief.bind(this)
+  }
+
+  componentWillMount() {
+    this.props.setMeta({
+      title: '个性签名'
+    })
   }
 
   componentDidMount() {
@@ -87,9 +94,9 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-// ResetBrief = CSSModules(ResetBrief, styles)
-
-export default connect(
+ResetBrief = connect(
   mapStateToProps,
   mapDispatchToProps
 )(ResetBrief)
+
+export default Shell(ResetBrief)

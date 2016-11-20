@@ -1,8 +1,5 @@
 import React, { Component, PropTypes } from 'react'
 
-// import CSSModules from 'react-css-modules'
-// import styles from './style.scss'
-
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { getUserInfo } from '../../reducers/user'
@@ -11,10 +8,18 @@ import Subnav from '../../components/subnav'
 import Questions from '../../components/questions'
 import PeopleList from '../../components/people-list'
 
+import Shell from '../../shell'
+
 class MeFollowPeople extends Component {
 
   constructor(props) {
     super(props)
+  }
+
+  componentWillMount() {
+    this.props.setMeta({
+      title: '我关注的人'
+    })
   }
 
   render() {
@@ -24,16 +29,11 @@ class MeFollowPeople extends Component {
     if (!me) {
       return (<div>loading</div>)
     }
-    
+
     return (
       <div>
-        <Subnav
-          left="返回"
-          middle="我关注的人"
-        />
-        <PeopleList
-          userId={me._id}
-        />
+        <Subnav left="返回" middle="我关注的人" />
+        <PeopleList userId={me._id} />
       </div>
     )
 
@@ -56,9 +56,6 @@ function mapDispatchToProps(dispatch, props) {
   }
 }
 
-// MeFollowPeople = CSSModules(MeFollowPeople, styles)
+MeFollowPeople = connect(mapStateToProps, mapDispatchToProps)(MeFollowPeople)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MeFollowPeople)
+export default Shell(MeFollowPeople)

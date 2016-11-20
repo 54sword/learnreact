@@ -11,22 +11,29 @@ import { loadQuestionById } from '../../actions/questions'
 import { getQuestionById } from '../../reducers/questions'
 import { addAnswer, resetNewAnswersList } from '../../actions/answers'
 
+import Shell from '../../shell'
+
 import Subnav from '../../components/subnav'
+import Editor from '../../components/editor'
 
 class AddAnswer extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      question: null
+      question: null,
+      content: ''
     }
     this.submitQuestion = this.submitQuestion.bind(this)
+    this.syncContent = this._syncContent.bind(this)
   }
 
   componentWillMount() {
 
-    let _self = this
-    let questionId = _self.props.params.questionId
+    this.props.setMeta({
+      title: '编写答案'
+    })
+
     let { loadQuestionById } = this.props
 
     const [ question ] = this.props.question
@@ -41,12 +48,18 @@ class AddAnswer extends React.Component {
 
     let { addAnswer, resetNewAnswersList } = this.props
     let questionId = this.props.params.questionId
-    let { answerBrief, answerDetail, answerPrice } = this.refs
+    // let { answerDetail } = this.refs
+    const { content } = this.state
+
+    if (!content) {
+      alert('不能提交空的答案')
+      return
+    }
 
     addAnswer({
       questionId: questionId,
-      answerContent: answerDetail.value,
-      answerPrice: answerPrice.value,
+      answerContent: content,
+      // answerPrice: answerPrice.value,
       deviceId: 1,
       callback: function(err, result) {
 
@@ -69,6 +82,10 @@ class AddAnswer extends React.Component {
 
   }
 
+  _syncContent(contentJson) {
+    this.state.content = contentJson
+  }
+
   render() {
 
     const [ question ] = this.props.question
@@ -84,22 +101,11 @@ class AddAnswer extends React.Component {
       />
       <div className="container">
         <div>
-          <textarea styleName="answerDetail" className="textarea" ref="answerDetail" placeholder="详情"></textarea>
+          <Editor syncContent={this.syncContent} />
+          {/*<textarea styleName="answerDetail" className="textarea" ref="answerDetail" placeholder="详情"></textarea>*/}
         </div>
         <div>
-          价格 <select ref="answerPrice">
-            <option value="1">1 ¥</option>
-            <option value="2">2 ¥</option>
-            <option value="3">3 ¥</option>
-            <option value="4">4 ¥</option>
-            <option value="5">5 ¥</option>
-            <option value="6">6 ¥</option>
-            <option value="7">7 ¥</option>
-            <option value="8">8 ¥</option>
-            <option value="9">9 ¥</option>
-            <option value="10">10 ¥</option>
-          </select>
-          <button className="button" onClick={this.submitQuestion}>提交</button>
+          <button className="button-full" onClick={this.submitQuestion}>提交</button>
         </div>
       </div>
     </div>)
@@ -138,7 +144,6 @@ function mapDispatchToProps(dispatch, props) {
 
 AddAnswer = CSSModules(AddAnswer, styles)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AddAnswer)
+AddAnswer = connect(mapStateToProps, mapDispatchToProps)(AddAnswer)
+
+export default Shell(AddAnswer)

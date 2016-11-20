@@ -16,7 +16,6 @@ import Questions from '../../components/questions'
 import Answers from '../../components/answers'
 import FollowPeople from '../../components/follow-people'
 import NodeList from '../../components/node-list'
-// import FollowPeoplesList from '../../components/follow-peoples-list'
 import PeopleList from '../../components/people-list'
 import FansList from '../../components/fans-list'
 
@@ -32,19 +31,25 @@ class People extends React.Component {
   }
 
   componentWillMount() {
+    const self = this
     const { loadPeopleById, displayNotFoundPage } = this.props
     const { peopleId } = this.props.params
-
     const [ people ] = this.props.peoples
 
     if (people) return
-
+    
     loadPeopleById({
       peopleId,
       callback: function(err, result){
+
         if (!result.success) {
           displayNotFoundPage()
+        } else {
+          self.props.setMeta({
+            title: result.data.nickname
+          })
         }
+
       }
     })
   }
@@ -105,7 +110,7 @@ class People extends React.Component {
                   people={people}
                   callback={(status)=>{
 
-                    console.log(status)
+                    // console.log(status)
 
                     people.follow = status
                     people.fans_count += status ? 1 : -1
@@ -161,7 +166,7 @@ class People extends React.Component {
         {currentTab == 1 ?
           <Answers
             name={people._id}
-            filter={{
+            filters={{
               user_id: people._id,
               date: new Date().getTime()
             }}
@@ -172,6 +177,7 @@ class People extends React.Component {
 
         {currentTab == 2 ?
           <NodeList
+            name={people._id}
             userId={people._id}
           />
           :
@@ -223,9 +229,6 @@ function mapDispatchToProps(dispatch, props) {
 
 People = CSSModules(People, styles)
 
-People = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(People)
+People = connect(mapStateToProps, mapDispatchToProps)(People)
 
 export default Shell(People)

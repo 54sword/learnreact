@@ -9,12 +9,19 @@ import { getUserInfo } from '../../reducers/user'
 import { resetPassword } from '../../actions/account'
 
 import Subnav from '../../components/subnav'
+import Shell from '../../shell'
 
 class ResetPassword extends Component {
 
   constructor(props) {
     super(props)
     this.submitResetPassword = this.submitResetPassword.bind(this)
+  }
+
+  componentWillMount() {
+    this.props.setMeta({
+      title: '修改密码'
+    })
   }
 
   componentDidMount() {
@@ -110,9 +117,6 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-// ResetPassword = CSSModules(ResetPassword, styles)
+ResetPassword = connect(mapStateToProps, mapDispatchToProps)(ResetPassword)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ResetPassword)
+export default Shell(ResetPassword)

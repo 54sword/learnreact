@@ -14,6 +14,7 @@ import { addNewAnswersList, loadAnswersByName } from '../../actions/answers'
 import { getAnswersByName } from '../../reducers/answers'
 
 import LikeButton from '../../components/like'
+import Editor from '../../components/editor'
 
 class Answers extends Component {
 
@@ -48,7 +49,8 @@ class Answers extends Component {
                   {answer.user_id.nickname} {answer.user_id.brief}
                 </div>
                 <div styleName="answersDetail">
-                  <div dangerouslySetInnerHTML={{__html:answer.content.replace(/\n/g,"<br />")}} />
+                  <Editor readOnly={true} content={answer.content} />
+                  {/*<div dangerouslySetInnerHTML={{__html:answer.content.replace(/\n/g,"<br />")}} />*/}
                 </div>
                 <div styleName="answer-footer">
 
@@ -60,8 +62,15 @@ class Answers extends Component {
                   />
 
                   <div styleName="reply">
-                    <Link to={`/comment/${answer._id}`} className="button－white">回复{answer.comment_count > 0 ? ' '+answer.comment_count : null}</Link>
+                    {!isSignin && answer.comment_count == 0 ?
+                      <a href="javascript:void(0)" onClick={showSign}>回复</a>
+                    : <Link
+                        to={isSignin && answer.comment_count == 0 ? `/add-comment/${answer._id}` : `/comment/${answer._id}`}
+                        className="button－white">
+                        回复{answer.comment_count > 0 ? ' '+answer.comment_count : null}
+                      </Link>}
                   </div>
+
                 </div>
               </div>
             )

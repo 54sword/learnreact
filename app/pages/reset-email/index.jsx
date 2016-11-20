@@ -11,12 +11,20 @@ import { addCaptcha } from '../../actions/captcha'
 
 import Subnav from '../../components/subnav'
 
+import Shell from '../../shell'
+
 class ResetEmail extends Component {
 
   constructor(props) {
     super(props)
     this.submitResetEmail = this.submitResetEmail.bind(this)
     this.sendCaptcha = this.sendCaptcha.bind(this)
+  }
+
+  componentWillMount() {
+    this.props.setMeta({
+      title: '修改邮箱'
+    })
   }
 
   sendCaptcha() {
@@ -27,7 +35,7 @@ class ResetEmail extends Component {
       newEmail.focus()
       return
     }
-    
+
     addCaptcha({
       email: newEmail.value,
       type: 'reset-email'
@@ -129,9 +137,7 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-// ResetEmail = CSSModules(ResetEmail, styles)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ResetEmail)
+ResetEmail = connect(mapStateToProps, mapDispatchToProps)(ResetEmail)
+
+export default Shell(ResetEmail)

@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 
+import DocumentMeta from 'react-document-meta'
+
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { setScrollPosition, saveScrollPosition } from './actions/scroll'
@@ -12,6 +14,10 @@ import Sign from './components/sign'
 import NotFound from './pages/not-found'
 import Loading from './components/loading'
 
+import config from '../config/config'
+
+import Weixin from './common/weixin'
+
 const Shell = (_component) => {
 
   class CP extends Component {
@@ -19,10 +25,15 @@ const Shell = (_component) => {
     constructor(props) {
       super(props)
       this.state = {
-        notFound: false
+        notFound: false,
+        meta: {
+          title: config.name,
+          description: config.description
+        }
       }
       this.displayNotFoundPage = this.displayNotFoundPage.bind(this)
       this.setLoadingDisplay = this.setLoadingDisplay.bind(this)
+      this.setMeta = this._setMeta.bind(this)
     }
 
     displayNotFoundPage() {
@@ -36,6 +47,29 @@ const Shell = (_component) => {
       setLoadingDisplay(bl)
     }
 
+    _setMeta(meta) {
+
+      meta.title = meta.title ? meta.title + ' - ' + config.name : config.name
+
+      this.setState({
+        meta: meta
+      })
+
+      if (Weixin.in) {
+
+        var $body = $('body')
+        document.title = meta.title
+        // hack在微信等webview中无法修改document.title的情况
+        var $iframe = $('<iframe src="/favicon.ico"></iframe>').on('load', function() {
+          setTimeout(function() {
+            $iframe.off('load').remove()
+          }, 0)
+        }).appendTo($body)
+
+      }
+
+    }
+
     render() {
 
       const { signStatus, loadingStatus } = this.props
@@ -46,12 +80,14 @@ const Shell = (_component) => {
       }
 
       return (<div>
+        <DocumentMeta {...this.state.meta} />
         {signStatus ? <Sign /> : null}
         {loadingStatus ? <Loading /> : null}
         <this.props.component
           {...this.props}
           displayNotFoundPage={this.displayNotFoundPage}
           setLoadingDisplay={this.setLoadingDisplay}
+          setMeta={this.setMeta}
         />
       </div>)
     }

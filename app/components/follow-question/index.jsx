@@ -10,69 +10,46 @@ class FollowQuestion extends Component {
 
   constructor(props) {
     super(props)
-
-    const { questionId, count, status, autherId } = this.props
-
-    this.state = {
-      count: count || 0,
-      status: status || false,
-      questionId: questionId,
-      autherId: autherId
-    }
-
     this.follow = this.follow.bind(this)
     this.cancelFollow = this.cancelFollow.bind(this)
   }
 
   follow() {
-    const { follow } = this.props
-    const { questionId } = this.state
-    const self = this
-    follow(questionId, function(err, result){
-      if (result && result.success) {
-        self.setState({
-          count: self.state.count + 1,
-          status: true
-        })
-      }
-    })
+    const { follow, question } = this.props
+    follow(question._id, (err, result)=>{})
   }
 
   cancelFollow() {
-    const { cancelFollow } = this.props
-    const { questionId } = this.state
-    const self = this
-    cancelFollow(questionId, function(err, result){
-      if (result && result.success) {
-        self.setState({
-          count: self.state.count - 1,
-          status: false
-        })
-      }
-    })
+    const { cancelFollow, question } = this.props
+    cancelFollow(question._id, (err, result)=>{})
   }
 
   render() {
+    const { peopleProfile, question } = this.props
 
-    const { count, status, autherId } = this.state
-    const { peopleProfile } = this.props
-
-    if (!peopleProfile._id || autherId == peopleProfile._id) {
+    // 自己的问题，不能关注
+    if (!peopleProfile._id ||
+        question.user_id && question.user_id._id == peopleProfile._id) {
       return(<span></span>)
     }
 
-    if (status) {
-      return (<span onClick={this.cancelFollow}>取消关注 {count > 0 ? count : null}</span>)
+    if (question.follow) {
+      return (<span onClick={this.cancelFollow}>
+                取消关注 {question.follow_count > 0 ? question.follow_count : null}
+              </span>)
     } else {
-      return (<span onClick={this.follow}>关注问题 {count > 0 ? count : null}</span>)
+      return (<span onClick={this.follow}>
+                关注 {question.follow_count > 0 ? question.follow_count : null}
+              </span>)
     }
 
   }
 }
 
 FollowQuestion.propTypes = {
-  peopleProfile: PropTypes.object.isRequired,
+  question: PropTypes.object.isRequired,
 
+  peopleProfile: PropTypes.object.isRequired,
   follow: PropTypes.func.isRequired,
   cancelFollow: PropTypes.func.isRequired
 }

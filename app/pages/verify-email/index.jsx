@@ -10,6 +10,8 @@ import { sendEmailVerifyCaptcha, checkEmailVerifyCaptcha } from '../../actions/a
 
 import Subnav from '../../components/subnav'
 
+import Shell from '../../shell'
+
 class ResetEmail extends Component {
 
   constructor(props) {
@@ -19,6 +21,12 @@ class ResetEmail extends Component {
     }
     this.submit = this.submit.bind(this)
     this.sendVerifyCode = this.sendVerifyCode.bind(this)
+  }
+
+  componentWillMount() {
+    this.props.setMeta({
+      title: '验证邮箱'
+    })
   }
 
   componentDidMount() {
@@ -65,7 +73,7 @@ class ResetEmail extends Component {
 
     sendEmailVerifyCaptcha({
       callback: function() {
-        console.log('12311')
+        // console.log('12311')
       }
     })
 
@@ -88,7 +96,7 @@ class ResetEmail extends Component {
     return (
       <div>
         <Subnav
-          middle="验证码邮箱"
+          middle="验证邮箱"
         />
         <div className="container">
 
@@ -140,9 +148,6 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-// ResetEmail = CSSModules(ResetEmail, styles)
+ResetEmail = connect(mapStateToProps, mapDispatchToProps)(ResetEmail)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ResetEmail)
+export default Shell(ResetEmail)

@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 
 import { addQuestion } from '../../actions/questions'
 import { loadNodes } from '../../actions/nodes'
-import { getAllNodes } from '../../reducers/nodes'
+import { getNodes } from '../../reducers/nodes'
 
 import Subnav from '../../components/subnav'
 import Shell from '../../shell'
@@ -24,11 +24,7 @@ class AddQuestion extends React.Component {
     this.state = {
       nodes: [],
       contentStateJSON: '',
-      contentHTML: '',
-      meta: {
-        title: '提问',
-        description: '提问'
-      }
+      contentHTML: ''
     }
     this.submitQuestion = this.submitQuestion.bind(this)
     this.sync = this.sync.bind(this)
@@ -40,13 +36,25 @@ class AddQuestion extends React.Component {
     // console.log(this.state.contentStateJSON)
   }
 
+  componentWillMount() {
+    this.props.setMeta({
+      title: '提问'
+    })
+  }
+
   componentDidMount() {
     const self = this
     const { loadNodes } = this.props
-    loadNodes({ child: 1, per_page:2000 }, function(err, result){
-      self.setState({
-        nodes: result.data
-      })
+    loadNodes({
+      name: 'add-question',
+      data: { child: 1, per_page:2000 },
+      callback: (err, result)=>{
+        /*
+        self.setState({
+          nodes: result.data
+        })
+        */
+      }
     })
   }
 
@@ -81,17 +89,16 @@ class AddQuestion extends React.Component {
 
   render() {
 
-    const { nodes } = this.state
+    const { nodes } = this.props
 
     return (<div>
-      <DocumentMeta {...this.state.meta} />
       <Subnav
         left="取消"
         middle="创建主题"
       />
       <div className="container">
         <div styleName="addQuestion">
-          <div><input styleName="questionTitle" className="input" ref="questionTitle" type="text" placeholder="问题标题"  /></div>
+          <div><input styleName="questionTitle" className="input" ref="questionTitle" type="text" placeholder="请输入标题"  /></div>
           <div>
             <Editor syncContent={this.sync} />
           </div>
@@ -119,7 +126,7 @@ AddQuestion.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    nodes: getAllNodes(state)
+    nodes: getNodes(state, 'add-question')
   }
 }
 

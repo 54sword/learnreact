@@ -1,14 +1,13 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 
-// import CSSModules from 'react-css-modules'
-// import styles from './style.scss'
+import arriveFooter from '../../common/arrive-footer'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { loadNodes } from '../../actions/nodes'
+import { getNodes, getLoading, getMore } from '../../reducers/nodes'
 
-// import FollowNode from '../follow-node'
 import NodeItem from '../node-item'
 
 class FollowNodesList extends Component {
@@ -16,52 +15,41 @@ class FollowNodesList extends Component {
   constructor(props) {
     super(props)
 
+    const { name, userId } = this.props
+
     this.state = {
-      nodesList: [],
+      name: name,
       page: 0,
       perPage: 20,
-      userId: this.props.userId,
-      loading: false,
-      more: true
+      userId: userId,
     }
-    this.triggerLoad = this.triggerLoad.bind(this)
-    this.callback = this.callback.bind(this)
+    this.triggerLoad = this._triggerLoad.bind(this)
   }
 
   componentDidMount() {
 
     const self = this
 
-    self.triggerLoad()
+    const { nodes } = this.props
+    const { name } = this.state
 
-    // 监听滚动条是否
-    var $window = $(window)
-    var $document = $(document)
-    $window.scroll(function(){
-      if ($document.scrollTop() + $window.height() >= $document.height() - 150) {
-        self.triggerLoad()
-      }
+    if (nodes.length == 0) {
+      self.triggerLoad()
+    }
+
+    arriveFooter.add(name, ()=>{
+      self.triggerLoad()
     })
 
   }
 
   componentWillUnmount() {
-    // 离开页面的时候，注意接触绑定的事件
-    $(window).unbind('scroll')
+    arriveFooter.remove(name)
   }
 
-  triggerLoad(callback) {
+  _triggerLoad(callback) {
     const { loadNodes } = this.props
-    const { nodesList, page, perPage, userId, loading, more } = this.state
-    const self = this
-
-    if (!more || loading) {
-      return
-    }
-
-    self.setState({
-      loading: true
-    })
+    const { name, page, perPage, userId } = this.state
 
     var data = {
       page: page,
@@ -73,40 +61,21 @@ class FollowNodesList extends Component {
       data.people_id = userId
     }
 
-    loadNodes(data, function(err, result){
-
-      const nodes = result.data
-
-      self.setState({
-        loading: false,
-        more: nodes.length < perPage ? false : true,
-        page: page+1,
-        nodesList: nodesList.concat(nodes)
-      })
-
+    loadNodes({
+      name,
+      data,
+      callback: function(err, result){
+      }
     })
-  }
 
-  callback (index, followStatus) {
-
-    const { nodesList } = this.state
-
-    nodesList[index].follow_count += followStatus ? 1 : -1
-    nodesList[index].follow = followStatus
-
-    this.setState({
-      nodesList: nodesList
-    })
   }
 
   render () {
-
-    const { nodesList, loading, more } = this.state
-    const self = this
+    const { nodes, loading, more } = this.props
 
     return (<div className="container">
       <ul>
-        {nodesList.map((node, index) => {
+        {nodes.map((node, index) => {
           return(<li key={node._id}>
             <Link to={`/topic/${node._id}`}><NodeItem node={node} /></Link>
           </li>)
@@ -120,11 +89,17 @@ class FollowNodesList extends Component {
 }
 
 FollowNodesList.propTypes = {
-  loadNodes: PropTypes.func.isRequired
+  loadNodes: PropTypes.func.isRequired,
+  nodes: PropTypes.array.isRequired,
+  loading: PropTypes.bool.isRequired,
+  more: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = (state, props) => {
   return {
+    nodes: getNodes(state, props.name),
+    loading: getLoading(state, props.name),
+    more: getMore(state, props.name)
   }
 }
 
@@ -134,9 +109,4 @@ const mapDispatchToProps = (dispatch, props) => {
   }
 }
 
-// FollowNodesList = CSSModules(FollowNodesList, styles)
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(FollowNodesList)
+export default connect(mapStateToProps, mapDispatchToProps)(FollowNodesList)

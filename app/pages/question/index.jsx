@@ -4,8 +4,6 @@ import { Link } from 'react-router'
 
 import Device from '../../common/device'
 
-// import {Editor, EditorState, RichUtils, Entity, AtomicBlockUtils, convertToRaw, CompositeDecorator, convertFromRaw} from 'draft-js'
-
 import CSSModules from 'react-css-modules'
 import styles from './style.scss'
 
@@ -21,9 +19,6 @@ import Shell from '../../shell'
 import Subnav from '../../components/subnav'
 import Answers from '../../components/answers'
 import FollowQuestion from '../../components/follow-question'
-// import Iframe from 'react-iframe'
-import Embed from '../../components/embed'
-import Iframe from '../../components/iframe'
 
 import Editor from '../../components/editor'
 
@@ -39,7 +34,15 @@ class Question extends React.Component {
     let [ question ] = this.props.question
 
     if (!question) {
-      loadQuestionById()
+      loadQuestionById((err, result)=>{
+        this.props.setMeta({
+          title: result.title
+        })
+      })
+    } else {
+      this.props.setMeta({
+        title: question.title
+      })
     }
   }
 
@@ -58,6 +61,10 @@ class Question extends React.Component {
         <Subnav
           left="返回"
           middle="内容正文"
+          right={isSignin ?
+            <Link to={`/add-answer/${question._id}`}>写答案</Link> :
+            <a href="javascript:;" onClick={showSign}>写答案</a>
+          }
         />
 
         <div className="container">
@@ -78,14 +85,10 @@ class Question extends React.Component {
           </div>
 
           <div styleName="other">
-            {question.answers_count} 个答案
+            {question.answers_count ? <span>{question.answers_count} 个答案</span> : null}
+            {question.view_count ? <span>{question.view_count} 浏览</span> : null}
 
-            <FollowQuestion
-              count={question.follow_count}
-              status={question.follow}
-              questionId={question._id}
-              autherId={question.user_id._id}
-            />
+            <FollowQuestion question={question} />
 
             {isSignin ?
               <Link to={`/add-answer/${question._id}`}>写答案</Link> :
@@ -123,10 +126,13 @@ function mapDispatchToProps(dispatch, props) {
 
   return {
     showSign: bindActionCreators(showSign, dispatch),
-    loadQuestionById: function(){
+    loadQuestionById: function(callback){
       bindActionCreators(loadQuestionById, dispatch)({
         questionId: props.params.questionId,
-        callback: function(err){
+        callback: function(err, result){
+
+          callback(err, result)
+
           if (err) {
             props.displayNotFoundPage()
           }

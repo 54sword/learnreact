@@ -14,6 +14,7 @@ import { isSignin } from '../../reducers/sign'
 
 import Subnav from '../../components/subnav'
 import CommentList from '../../components/comment-list'
+import Editor from '../../components/editor'
 
 import Shell from '../../shell'
 
@@ -37,9 +38,13 @@ class Answer extends React.Component {
 
   componentWillMount() {
 
+    const self = this
     const [ answer ] = this.props.answer
 
     if (answer) {
+      this.props.setMeta({
+        title: answer.question_id.title + ' - ' + answer.user_id.nickname + '的答案'
+      })
       return
     }
 
@@ -47,10 +52,17 @@ class Answer extends React.Component {
 
     const { fetchAnswerById, displayNotFoundPage } = this.props
 
-    fetchAnswerById(answerId, (err, answer) => {
+    fetchAnswerById(answerId, (err, result) => {
+
       if (err) {
         displayNotFoundPage()
+      } else {
+        let answer = result.data[0]
+        self.props.setMeta({
+          title: answer.question_id.title + ' - ' + answer.user_id.nickname + '的答案'
+        })
       }
+
     })
 
   }
@@ -70,7 +82,7 @@ class Answer extends React.Component {
       <div>
         <Subnav
           middle="回答"
-          right={<a href='javascript:void(0);' onClick={this.addComment}>添加评论1</a>}
+          right={<a href='javascript:void(0);' onClick={this.addComment}>添加评论</a>}
         />
 
         <div className="container" styleName="question">
@@ -82,7 +94,8 @@ class Answer extends React.Component {
             <img src={answer.user_id.avatar_url} />
             <span>{answer.user_id.nickname} {answer.user_id.brief}</span>
           </div>
-          <div dangerouslySetInnerHTML={{__html:answer.content.replace(/\n/g,"<br />")}}></div>
+          <Editor content={answer.content} readOnly={true} />
+          {/*<div dangerouslySetInnerHTML={{__html:answer.content.replace(/\n/g,"<br />")}}></div>*/}
         </div>
 
         <CommentList

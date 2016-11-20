@@ -8,14 +8,22 @@ import Subnav from '../../components/subnav'
 import FansList from '../../components/fans-list'
 import PeopleList from '../../components/people-list'
 
+import Shell from '../../shell'
+
 class MeFollowPeople extends Component {
 
   constructor(props) {
     super(props)
   }
 
+  componentWillMount() {
+    this.props.setMeta({
+      title: '我的粉丝'
+    })
+  }
+
   render() {
-    
+
     const { me } = this.props
 
     return (
@@ -46,7 +54,6 @@ function mapDispatchToProps(dispatch, props) {
 
 // MeFollowPeople = CSSModules(MeFollowPeople, styles)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MeFollowPeople)
+MeFollowPeople = connect(mapStateToProps, mapDispatchToProps)(MeFollowPeople)
+
+export default Shell(MeFollowPeople)

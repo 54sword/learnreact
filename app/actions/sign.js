@@ -38,25 +38,15 @@ export function signin(email, password, callback) {
 
 // 注册
 export function signup(data, callback) {
-
   return dispatch => {
-
     API.signup({ data, callback })
+  }
+}
 
-    /*
-    $.ajax({
-      url: API_URL+'/api/v1/signup',
-      type: 'post',
-      data: data,
-      error(err) {
-        callback(err.responseJSON)
-      },
-      success(result) {
-        callback(null, result);
-      }
-    });
-    */
 
-  };
-
+// 注册邮箱验证
+export function signupEmailVerify(code, callback) {
+  return dispatch => {
+    API.signupEmailVerify({ code, callback })
+  }
 }

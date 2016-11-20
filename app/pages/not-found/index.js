@@ -3,10 +3,14 @@ import { Link } from 'react-router'
 import CSSModules from 'react-css-modules'
 import styles from './style.scss'
 
+import Subnav from '../../components/subnav'
+// import Shell from '../../shell'
+
 class NotFound extends Component {
 
   constructor(props) {
     super(props)
+
     this.state = {
       notices: {
         'wrong_token': '无效的 access token',
@@ -19,15 +23,28 @@ class NotFound extends Component {
     }
   }
 
+  componentWillMount() {
+
+    // const { notices } = this.state
+    // let notice = ''
+    //
+    // if (this.props && this.props.location.query.notice) {
+    //   notice = this.props.location.query.notice
+    // }
+    //
+    // this.props.setMeta({
+    //   title: notice && notices[notice] ? notices[notice] : '不存在这个页面'
+    // })
+  }
+
   render () {
 
+    const { notices } = this.state
     let notice = ''
 
     if (this.props && this.props.location.query.notice) {
       notice = this.props.location.query.notice
     }
-
-    const { notices } = this.state
 
     return (
       <div styleName="text">

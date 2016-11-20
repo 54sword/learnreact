@@ -45,9 +45,6 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-Oauth = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Oauth)
+Oauth = connect(mapStateToProps, mapDispatchToProps)(Oauth)
 
 export default Oauth

@@ -6,7 +6,7 @@ import styles from './style.scss'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { loadNodes } from '../../actions/nodes'
-// import { getNodeById } from '../../reducers/nodes'
+import { getNodeById } from '../../reducers/nodes'
 
 import Shell from '../../shell'
 import Subnav from '../../components/subnav'
@@ -17,35 +17,41 @@ class Topic extends Component {
 
   constructor(props) {
     super(props)
-    this.state = {
-      node: null
-    }
   }
 
   componentWillMount() {
-    const self = this
-    let { fetchNodes } = this.props
 
-    fetchNodes((err, result)=>{
-      // console.log(err, result)
-      if (!err) {
-        self.setState({
-          node: result[0]
+    let { fetchNodes } = this.props
+    let [ node ] = this.props.node
+    const self = this
+
+    if (!node) {
+      fetchNodes((err, result)=>{
+
+        this.props.setMeta({
+          title: result[0].name + '社群'
         })
-      }
-    })
+
+      })
+    } else {
+      this.props.setMeta({
+        title: node.name + '社群'
+      })
+    }
 
   }
 
   render() {
+
     const { pathname } = this.props.location
     const { topicId } = this.props.params
-    let { node } = this.state
-    const self = this
+    let [ node ] = this.props.node
 
     if (!node) {
       return (<div>正在加载主题中...</div>)
     }
+
+
 
     return (
       <div>
@@ -68,13 +74,13 @@ class Topic extends Component {
 }
 
 Topic.propTypes = {
-  // node: PropTypes.array.isRequired,
+  node: PropTypes.array.isRequired,
   fetchNodes: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state, props) => {
   return {
-    // node: getNodeById(state, props.params.topicId)
+    node: getNodeById(state, props.params.topicId)
   }
 }
 
@@ -83,13 +89,15 @@ const mapDispatchToProps = (dispatch, props) => {
     fetchNodes: function(callback){
 
       bindActionCreators(loadNodes, dispatch)({
-        node_id: props.params.topicId
-      }, function(err, result){
-        if (err || !result.success) {
-          props.displayNotFoundPage()
-          return
+        name: props.params.topicId,
+        data:{ node_id: props.params.topicId },
+        callback: function(err, result){
+          if (err || !result.success) {
+            props.displayNotFoundPage()
+            return
+          }
+          callback(err, result.data)
         }
-        callback(err, result.data)
       })
 
     }

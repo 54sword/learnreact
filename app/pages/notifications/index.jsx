@@ -23,6 +23,11 @@ class Notifications extends Component {
 
   componentWillMount() {
     this.load()
+
+    this.props.setMeta({
+      title: '通知'
+    })
+
   }
 
   load() {

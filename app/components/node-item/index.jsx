@@ -29,14 +29,15 @@ class NodeItem extends Component {
   }
 
   render () {
-    
-    const { node } = this.state
+
+    const { node } = this.props
+
+    // callback={(followStatus)=>{ this.callback(followStatus) }}
 
     return (<div styleName="item">
               <span styleName="follow">
                 <FollowNode
                   node={node}
-                  callback={(followStatus)=>{ this.callback(followStatus) }}
                 />
               </span>
               <img styleName="avatar" src={node.avatar_url} />

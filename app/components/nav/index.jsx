@@ -17,6 +17,8 @@ class Navbar extends Component {
     super(props)
   }
 
+
+
   render() {
 
     const { user, isSignin, showSign, unreadNotice } = this.props
@@ -34,15 +36,14 @@ class Navbar extends Component {
         <div styleName="header">
           <div>
             <ul className={isSignin ? null : "three"}>
-              <li><IndexLink to="/" activeClassName={styles.active}>问答</IndexLink></li>
-              <li><Link to="/topics" activeClassName={styles.active}>主题</Link></li>
-              {isSignin ? <li><Link to="/notifications" activeClassName={styles.active}>消息{unreadNotice > 0 ? unreadNotice : null}</Link></li> : null}
+              <li><IndexLink to="/" activeClassName={styles.active}>首页</IndexLink></li>
+              <li><Link to="/topics" activeClassName={styles.active}>社群</Link></li>
+              {isSignin ? <li><Link to="/notifications" activeClassName={styles.active}>通知{unreadNotice > 0 ? unreadNotice : null}</Link></li> : null}
               {me}
             </ul>
           </div>
         </div>
         <div className={styles.placeholder}>
-
         </div>
       </div>
     )

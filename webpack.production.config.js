@@ -18,6 +18,15 @@ module.exports= {
     ],
     //添加要打包在vendors里面的库
     vendors: [
+      'react',
+      'react-redux',
+      'react-dom',
+      'react-cookie',
+      'react-router',
+      'redux-thunk',
+      'jquery',
+      'draft-js',
+      'react-ga'
       // path.resolve(BOWER_COMPONENTS, './jquery.cookie/jquery.cookie.js'),
 
       // path.resolve(BOWER_COMPONENTS, './bootstrap/dist/css/bootstrap.min.css'),
@@ -75,8 +84,8 @@ module.exports= {
         warnings: false
       }
     }),
-    //把入口文件里面的数组打包成verdors.js
-    // new webpack.optimize.CommonsChunkPlugin('common.[hash].js', ['app', 'vendors']),
+    // 公共模块打包在一起
+    new webpack.optimize.CommonsChunkPlugin('common.[hash].js', ['app', 'vendors']),
     new HtmlwebpackPlugin({
       title: config.name,
       public_path: config.PUBLIC_PATH,

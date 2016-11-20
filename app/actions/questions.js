@@ -1,5 +1,57 @@
 import * as API from '../api/questions'
 
+import { Editor, EditorState, RichUtils, Entity, AtomicBlockUtils, convertToRaw, convertFromRaw, CompositeDecorator } from 'draft-js'
+
+function getEntityStrategy(mutability) {
+  return function(contentBlock, callback) {
+    contentBlock.findEntityRanges(
+      (character) => {
+        const entityKey = character.getEntity();
+        if (entityKey === null) {
+          return false;
+        }
+        return Entity.get(entityKey).getMutability() === mutability;
+      },
+      callback
+    );
+  };
+}
+
+function getDecoratedStyle(mutability) {
+  switch (mutability) {
+    case 'IMMUTABLE': return styles.immutable;
+    case 'MUTABLE': return styles.mutable;
+    case 'SEGMENTED': return styles.segmented;
+    default: return null;
+  }
+}
+
+const TokenSpan = (props) => {
+  const style = getDecoratedStyle(
+    Entity.get(props.entityKey).getMutability()
+  )
+  return (
+    <span {...props} style={style}>
+      {props.children}
+    </span>
+  )
+}
+
+const decorator = new CompositeDecorator([
+  {
+    strategy: getEntityStrategy('IMMUTABLE'),
+    component: TokenSpan,
+  },
+  {
+    strategy: getEntityStrategy('MUTABLE'),
+    component: TokenSpan,
+  },
+  {
+    strategy: getEntityStrategy('SEGMENTED'),
+    component: TokenSpan,
+  }
+])
+
 import {
   ADD_QUESTIONS,
   QUESTIONS_LOADING_STATUS,
@@ -81,6 +133,34 @@ export function loadQuestionsByName(name) {
         if (questions.length == 0) {
           dispatch(nomoreQuestion(name, true))
         } else {
+
+          for (let i = 0, max = questions.length; i < max; i++) {
+            let answers = questions[i].answers
+            for (let n = 0, length = answers.length; n < length; n++) {
+
+              let e = EditorState.createWithContent(convertFromRaw(JSON.parse(answers[n].content)), decorator)
+              const content = e.getCurrentContent()
+              let raw = convertToRaw(content)
+
+              // console.log(raw.entityMap)
+
+              let text = ''
+
+              for (let x in raw.blocks) {
+                text += raw.blocks[x].text
+              }
+
+              if (text.length > 140) {
+                text = text.slice(0, 140)
+                text = text.replace(/\n/g,"")+'...'
+              }
+
+              questions[i].answers[n].content = text
+              questions[i].answers[n].media = raw.entityMap[0] ? raw.entityMap[0].data.src : ''
+
+            }
+          }
+
           dispatch(addQuestions(name, questions))
         }
 

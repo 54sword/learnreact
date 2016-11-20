@@ -21,6 +21,14 @@ class Forgot extends Component {
     this.fetchCaptcha = this.fetchCaptcha.bind(this)
   }
 
+  componentWillMount() {
+
+    this.props.setMeta({
+      title: '忘记密码'
+    })
+
+  }
+
   submitResetPassword() {
     const { email, captcha, newPassword, confirmNewPassword } = this.refs
     const { resetPasswordByCaptcha } = this.props
@@ -134,9 +142,6 @@ function mapDispatchToProps(dispatch) {
 
 Forgot = CSSModules(Forgot, styles)
 
-Forgot = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Forgot)
+Forgot = connect(mapStateToProps, mapDispatchToProps)(Forgot)
 
 export default Shell(Forgot)

@@ -10,6 +10,9 @@ const loadQuestions = ({ accessToken = '', data, callback }) => {
 
       var data = result.data
 
+      /*
+      var data = result.data
+
       data.map((question, i) => {
         if (question.answers.length > 0) {
           question.answers.map((answer, n)=>{
@@ -20,6 +23,7 @@ const loadQuestions = ({ accessToken = '', data, callback }) => {
           })
         }
       })
+      */
 
       callback(data)
 

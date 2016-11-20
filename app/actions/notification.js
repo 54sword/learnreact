@@ -45,12 +45,15 @@ export function loadUnreadCount() {
 
           setTimeout(function(){
             run()
-          }, 1000 * 60)
+          }, 1000 * 60 * 2)
         }
 
       })
     }
 
-    run()
+    setTimeout(()=>{
+      run()
+    }, 1000 * 5)
+
   }
 }

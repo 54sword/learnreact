@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 
+import arriveFooter from '../../common/arrive-footer'
+
 import CSSModules from 'react-css-modules'
 import styles from './style.scss'
 
@@ -11,15 +13,6 @@ import { getQuestionsByName, getQuestionsLoadingStatus, getQuestionsNomoreStatus
 
 import LikeButton from '../../components/like'
 import FollowQuestion from '../../components/follow-question'
-
-/*
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
-<ReactCSSTransitionGroup
-transitionName="example"
-transitionEnterTimeout={300}
-transitionLeaveTimeout={300}>
-</ReactCSSTransitionGroup>
-*/
 
 function Answers(answers) {
   return (
@@ -74,13 +67,7 @@ function Questions(questions) {
               <div>
                 <span>回答{question.answers_count}</span>
                 <span>关注{question.follow_count > 0 ? question.follow_count : null}</span>
-                <FollowQuestion
-                  count={question.follow_count}
-                  status={question.follow}
-                  questionId={question._id}
-                  autherId={question.user_id._id}
-                />
-
+                <FollowQuestion question={question} />
               </div>
             </div>
             {Answers(question.answers)}
@@ -126,19 +113,13 @@ class QuestionsList extends Component {
       loadQuestions()
     }
 
-    // 监听滚动条是否
-    var $window = $(window)
-    var $document = $(document)
-    $window.scroll(function(){
-      if ($document.scrollTop() + $window.height() >= $document.height() - 150) {
-        loadQuestions()
-      }
+    arriveFooter.add('home', ()=>{
+      loadQuestions()
     })
   }
 
   componentWillUnmount() {
-    // 离开页面的时候，注意接触绑定的事件
-    $(window).unbind('scroll')
+    arriveFooter.remove('home')
   }
 
   componentWillReceiveProps(props) {
@@ -220,7 +201,4 @@ const mapDispatchToProps = (dispatch, props) => {
 
 QuestionsList = CSSModules(QuestionsList, styles);
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(QuestionsList)
+export default connect(mapStateToProps, mapDispatchToProps)(QuestionsList)

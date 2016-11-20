@@ -4,6 +4,8 @@ import { Provider, connect } from 'react-redux'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import cookie from 'react-cookie'
 
+import config from '../config/config'
+
 // css 样式
 import styles from './pages/global/global.scss'
 
@@ -36,7 +38,6 @@ import Answer from './pages/answer'
 import Comments from './pages/comments'
 import AddComment from './pages/add-comment'
 import AddAnswer from './pages/add-answer'
-// import Find from './pages/find'
 import signupEmailVerify from './pages/signup-email-verify'
 import AddQuestion from './pages/add-question'
 import People from './pages/people'
@@ -46,21 +47,25 @@ import OauthBinding from './pages/oauth-binding'
 
 import Notification from './pages/notifications'
 
+// ----
 
-// import './bower_components/bootstrap/dist/css/bootstrap.min.css'
-// import './bower_components/bootstrap/dist/js/bootstrap.min.js'
+// google 分析
+import ReactGA from 'react-ga'
+ReactGA.initialize(config.GA)
+
+function logPageView() {
+  ReactGA.set({ page: window.location.pathname })
+  ReactGA.pageview(window.location.pathname)
+}
 
 // ----
 
 import { bindActionCreators } from 'redux'
 import { loadUserInfo, addAccessToken, removeAccessToken } from './actions/user'
-// import { loadFollowNodes } from './actions/nodes'
-// import { loadFollowPeoples } from './actions/peoples'
 import { loadUnreadCount } from './actions/notification'
 
 import configureStore from './store/configure-store'
 let store = configureStore()
-
 
 // 开始
 function start(isSignin) {
@@ -104,7 +109,7 @@ function start(isSignin) {
   render((
     <Provider store={store}>
       <Router history={browserHistory}>
-        <Route path="/" component={APP}>
+        <Route path="/" component={APP} onUpdate={logPageView}>
           <IndexRoute
             component={Home}
             onLeave={triggerLeave}

@@ -18,6 +18,12 @@ class Topics extends React.Component {
     super(props)
   }
 
+  componentWillMount() {
+    this.props.setMeta({
+      title: '社群'
+    })
+  }
+
   render() {
 
     return (
@@ -26,7 +32,7 @@ class Topics extends React.Component {
 
         <div className="container">
 
-          <NodeList />
+          <NodeList name="topics" />
 
         </div>
 

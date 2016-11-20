@@ -2,14 +2,49 @@
 import merge from 'lodash/merge'
 
 let initialState = {
-  other: [],
-  main: []
+  // other: [],
+  // main: []
 }
 
 export default function nodes(state = initialState, action) {
 
   switch (action.type) {
 
+    // 添加新的列表
+    case 'SET_NODE_LIST':
+      var { name, filters, data, loading, more } = action
+
+      state[name] = {
+        filters: filters,
+        data: data,
+        loading: loading,
+        more: more
+      }
+      return merge({}, state, {})
+    case 'FOLLOW_NODE':
+
+      const { nodeId, status } = action
+
+      // console.log(status)
+
+      for (let i in state) {
+
+        let nodes = state[i]
+        nodes = nodes.data
+
+        for (let n = 0, length = nodes.length; n < length; n++) {
+          if (nodes[n]._id == nodeId) {
+            state[i].data[n].follow_count += status ? 1 : -1
+            state[i].data[n].follow = status
+
+            console.log(state[i].data[n].follow)
+          }
+        }
+
+      }
+
+      return merge({}, state, {})
+    /*
     case 'ADD_NODES':
       state['main'] = action.nodes
       return merge({}, state, {})
@@ -17,6 +52,7 @@ export default function nodes(state = initialState, action) {
     case 'ADD_NODE':
       state['other'].push(action.node)
       return merge({}, state, {})
+    */
 
     default:
       return state
@@ -24,72 +60,41 @@ export default function nodes(state = initialState, action) {
 
 }
 
-export function getAllNodes(state) {
-  /*
-  let followNodes = {};
-  for (let i in state.user.followNodes) {
-    followNodes[state.user.followNodes[i]._id] = 1
-  }
 
-
-  let nodes = state.nodes['main']
-
-  let magic = function(nodeId) {
-    return followNodes[nodeId] ? true : false
-  }
-
-  nodes.map((node, key)=>{
-    nodes[key].follow = magic(node._id)
-
-    if (node.children.length > 0) {
-      node.children.map((node, k) => {
-        nodes[key].children[k].follow = magic(node._id)
-      })
-    }
-
-  })
-  */
-
-  return state.nodes['main']
+export function getNodes(state, name) {
+  return state.nodes[name] ? state.nodes[name].data : []
 }
 
+export function getLoading(state, name) {
+  return state.nodes[name] ? state.nodes[name].loading : true
+}
+
+export function getMore(state, name) {
+  return state.nodes[name] ? state.nodes[name].more : true
+}
+
+/*
+export function getAllNodes(state) {
+  return state.nodes['main']
+}
+*/
 
 export function getNodeById(state, nodeId) {
 
-  let nodes = state.nodes['main']
-  let otherNodes = state.nodes['other']
+  let nodeList = state.nodes
 
-  let run = (nodes) => {
-    for (let i = 0, max = nodes.length; i < max; i++) {
-      if (nodes[i]._id == nodeId) {
-        return nodes[i]
-      } else if (nodes[i].children.length > 0) {
-        return run(nodes[i].children)
+  for (let i in nodeList) {
+
+    let nodes = nodeList[i]
+    nodes = nodes.data
+
+    for (let n = 0, length = nodes.length; n < length; n++) {
+      if (nodes[n]._id == nodeId) {
+        return [nodes[n]]
       }
     }
-    return null
+
   }
 
-  let result = run(nodes)
-
-  if (!result) {
-    result = run(otherNodes)
-  }
-
-  /*
-  if (result) {
-
-    let followNodes = {};
-
-    for (let i in state.user.followNodes) {
-      followNodes[state.user.followNodes[i]._id] = 1
-    }
-
-    result.follow = followNodes[result._id] ? true : false
-  }
-  */
-
-  return result ? [result] : []
-
-  // return { item: result } || {item: null}
+  return []
 }

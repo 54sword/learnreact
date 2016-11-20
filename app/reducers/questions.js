@@ -101,6 +101,23 @@ export default function questions(state = initialState, action) {
       state[name].nomore = status
       return merge({}, state, {})
 
+    // 更新所有列表中 questionid 的 follow 状态
+    case 'UPDATE_QUESTION_FOLLOW':
+      var { questionId, followStatus } = action
+
+      for (let i in state) {
+        let data = state[i].data
+        if (data.length > 0) {
+          for (let n = 0, max = data.length; n < max; n++) {
+            if (data[n]._id == questionId) {
+              state[i].data[n].follow_count += followStatus ? 1 : -1
+              state[i].data[n].follow = followStatus
+            }
+          }
+        }
+      }
+
+      return merge({}, state, {})
     default:
       return state
   }

@@ -8,7 +8,15 @@ export function follow(questionId, callback = ()=>{}) {
     API.follow({
       question_id: questionId,
       access_token: accessToken
-    }, callback)
+    }, (err, result)=>{
+
+      if (result && result.success) {
+        dispatch({ type: 'UPDATE_QUESTION_FOLLOW', questionId, followStatus: true  })
+      }
+
+      callback(err, result)
+    })
+
   }
 }
 
@@ -20,7 +28,14 @@ export function cancelFollow(questionId, callback = ()=>{}) {
     API.cancelFollow({
       question_id: questionId,
       access_token: accessToken
-    }, callback)
+    }, (err, result)=>{
+
+      if (result && result.success) {
+        dispatch({ type: 'UPDATE_QUESTION_FOLLOW', questionId, followStatus: false  })
+      }
+
+      callback(err, result)
+    })
 
   }
 }

@@ -4,9 +4,11 @@ import ReactDOM from 'react-dom'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-import * as Actions from '../../actions'
+import { signupEmailVerify } from '../../actions/sign'
 
 import Nav from '../../components/nav'
+
+import Shell from '../../shell'
 
 class SignupEmailVerify extends React.Component {
 
@@ -16,12 +18,16 @@ class SignupEmailVerify extends React.Component {
       status: '正在邮箱验证中...'
     }
   }
-  
+
   componentWillMount() {
     let self = this
     let code = this.props.params.code
 
-    const { signupEmailVerify } = this.props.actions
+    this.props.setMeta({
+      title: '验证邮箱'
+    })
+
+    const { signupEmailVerify } = this.props
 
     signupEmailVerify(code, function(err, result){
       if (err) console.log(err)
@@ -36,6 +42,7 @@ class SignupEmailVerify extends React.Component {
         })
       }
     })
+
   }
 
   render () {
@@ -46,25 +53,20 @@ class SignupEmailVerify extends React.Component {
 }
 
 SignupEmailVerify.propTypes = {
-  question: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired
+  signupEmailVerify: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {
   return {
-    question: state.question
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(Actions, dispatch)
+    signupEmailVerify: bindActionCreators(signupEmailVerify, dispatch)
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SignupEmailVerify)
+SignupEmailVerify = connect(mapStateToProps, mapDispatchToProps)(SignupEmailVerify)
 
-// export default Question
+export default Shell(SignupEmailVerify)

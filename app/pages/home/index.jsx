@@ -1,7 +1,9 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import CSSModules from 'react-css-modules'
 import { Link } from 'react-router'
+
+import CSSModules from 'react-css-modules'
+
 import cookie from 'react-cookie'
 
 import { bindActionCreators } from 'redux'
@@ -50,6 +52,13 @@ class Home extends Component {
     }
 
     this.toTab = this.toTab.bind(this)
+  }
+
+  componentWillMount() {
+    this.props.setMeta({
+      title: '',
+      description: ''
+    })
   }
 
   toTab(key) {
@@ -101,6 +110,9 @@ class Home extends Component {
 }
 
 Home.propTypes = {
+
+  setMeta: PropTypes.func.isRequired,
+
   isSignin: PropTypes.bool.isRequired,
   showSign: PropTypes.func.isRequired,
   userProfile: PropTypes.object.isRequired,

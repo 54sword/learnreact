@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { Link, browserHistory } from 'react-router'
 
+import Weixin from '../../common/weixin'
+
 import CSSModules from 'react-css-modules'
 import styles from './style.scss'
 
@@ -22,17 +24,6 @@ function QueryString() {
     }
   }
 }
-
-// 是否是微信浏览器
-function is_weixn(){
-  var ua = navigator.userAgent.toLowerCase();
-  if (ua.match(/MicroMessenger/i)=="micromessenger") {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 
 class SubNav extends Component {
 
@@ -62,7 +53,7 @@ class SubNav extends Component {
       back = <Link to={params.subnav_back}>{left}</Link>
     }
 
-    if (is_weixn()) {
+    if (Weixin.in) {
       return (<div></div>)
     }
 
