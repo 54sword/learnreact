@@ -129,12 +129,11 @@ function mapDispatchToProps(dispatch, props) {
     loadQuestionById: function(callback){
       bindActionCreators(loadQuestionById, dispatch)({
         questionId: props.params.questionId,
-        callback: function(err, result){
-
-          callback(err, result)
-
+        callback: function(err, question){
           if (err) {
             props.displayNotFoundPage()
+          } else {
+            callback(err, question)
           }
         }
       })

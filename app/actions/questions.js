@@ -204,12 +204,13 @@ export function loadQuestionById({ questionId, callback }) {
     API.getQuestionById({
       accessToken,
       data,
-      callback: (question)=>{
+      callback: (err, question)=>{
 
         if (question) {
           dispatch({ type: 'ADD_QUESTION', question: question })
-          callback(null, question)
         }
+
+        callback(err, question)
 
       }
     })

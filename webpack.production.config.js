@@ -27,15 +27,12 @@ module.exports= {
       'jquery',
       'draft-js',
       'react-ga'
-      // path.resolve(BOWER_COMPONENTS, './jquery.cookie/jquery.cookie.js'),
-
-      // path.resolve(BOWER_COMPONENTS, './bootstrap/dist/css/bootstrap.min.css'),
-      // path.resolve(BOWER_COMPONENTS, './bootstrap/dist/js/bootstrap.min.js'),
     ]
   },
   output: {
     path: BUILD_PATH,
-    publicPath: config.PUBLIC_PATH+'/', // 打包文件内用到的URL路径, 比如背景图等(可以设成http的地址, 比如: http://cdn.my.com)
+    // 打包文件内用到的URL路径, 比如背景图等(可以设成http的地址, 比如: http://cdn.my.com)
+    publicPath: config.PUBLIC_PATH+'/',
     filename: '[name].[hash].js'
   },
   resolve: {
@@ -49,16 +46,17 @@ module.exports= {
       {
         test: /\.scss$/,
         loaders: [
-          'style',
-          'css?modules&importLoaders=1&localIdentName=[hash:base64:5]',
-          'resolve-url',
-          'sass'
+          'style', 'css?modules&importLoaders=1&localIdentName=[hash:base64:5]',
+          'resolve-url','sass'
         ],
         include: APP_PATH
       },
       { test: /\.css$/, loader: 'style!css' },
       { test: /\.(png|jpg|gif)$/, loader: 'url?limit=40000' },
-      { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&minetype=application/font-woff" },
+      {
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: "url-loader?limit=10000&minetype=application/font-woff"
+      },
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" }
     ]
   },
@@ -76,9 +74,9 @@ module.exports= {
     }),
     //这个使用uglifyJs压缩你的js代码
     new webpack.optimize.UglifyJsPlugin({
-      // output: {
-      //   comments: false,
-      // },
+      output: {
+        comments: false,
+      },
       // minimize: true,
       compress: {
         warnings: false

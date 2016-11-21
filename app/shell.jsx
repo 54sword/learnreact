@@ -11,7 +11,8 @@ import { getLoadingStatus } from './reducers/loading'
 import { setLoadingDisplay } from './actions/loading'
 
 import Sign from './components/sign'
-import NotFound from './pages/not-found'
+// import NotFound from './pages/not-found'
+import Tips from './components/tips'
 import Loading from './components/loading'
 
 import config from '../config/config'
@@ -76,7 +77,7 @@ const Shell = (_component) => {
       let { notFound } = this.state
 
       if (notFound) {
-        return (<NotFound />)
+        return (<div><DocumentMeta {...this.state.meta} /><Tips /></div>)
       }
 
       return (<div>

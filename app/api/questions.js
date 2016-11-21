@@ -42,7 +42,11 @@ export function getQuestionById({ accessToken = '', data, callback }) {
     accessToken,
     data,
     callback: (questions)=>{
-      callback(questions && questions.length > 0 ? questions[0] : null)
+      if (questions && questions.length > 0) {
+        callback(null, questions[0])
+      } else {
+        callback(true)
+      }
     }
   })
 }

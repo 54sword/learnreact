@@ -7,7 +7,7 @@ const load = ({ url, accessToken, data, callback }) => {
     data: data,
     callback: (result) => {
       if (result.success) {
-        callback(null, result.data)
+        callback(null, result)
       } else {
         callback(true, result)
       }

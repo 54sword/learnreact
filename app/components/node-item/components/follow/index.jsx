@@ -1,9 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 
-// import CSSModules from 'react-css-modules'
-// import styles from './style.scss'
-
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { followNode, unfollowNode } from '../../../../actions/nodes'
@@ -20,7 +17,7 @@ class FollowNode extends Component {
   follow(e) {
 
     e.preventDefault()
-    
+
     const { node, loadFollowNodes,
             unfollowNode, followNode, deleteQuestionList, callback
           } = this.props
@@ -29,15 +26,7 @@ class FollowNode extends Component {
 
     handleFollow({
       id: node._id,
-      callback: (err, result) => {
-        /*
-        if (result && result.success) {
-          // 更新首页问题列表
-          deleteQuestionList({ name: 'home' })
-          // callback(node.follow ? false : true)
-        }
-        */
-      }
+      callback: (err, result) => {}
     })
 
   }
@@ -56,7 +45,7 @@ class FollowNode extends Component {
         className="button"
         onClick={this.follow}
         type="submit"
-        value={node.follow ? "已关注" : "关注"}
+        value={node.follow ? "已加入" : "加入"}
       />
     )
   }
@@ -83,8 +72,6 @@ function mapDispatchToProps(dispatch) {
     deleteQuestionList: bindActionCreators(deleteQuestionList, dispatch)
   }
 }
-
-// FollowNode = CSSModules(FollowNode, styles)
 
 export default connect(
   mapStateToProps,

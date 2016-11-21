@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { getUserInfo } from '../../reducers/user'
 
 import Subnav from '../../components/subnav'
-import FansList from '../../components/fans-list'
+// import FansList from '../../components/fans-list'
 import PeopleList from '../../components/people-list'
 
 import Shell from '../../shell'
@@ -29,7 +29,7 @@ class MeFollowPeople extends Component {
     return (
       <div>
         <Subnav left="返回" middle="我的粉丝" />
-        <PeopleList type={"fans"} userId={me._id} />
+        <PeopleList type={"fans"} peopleId={me._id} />
       </div>
     )
 

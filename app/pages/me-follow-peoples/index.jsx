@@ -33,7 +33,7 @@ class MeFollowPeople extends Component {
     return (
       <div>
         <Subnav left="返回" middle="我关注的人" />
-        <PeopleList userId={me._id} />
+        <PeopleList type={"follow-people"} peopleId={me._id} />
       </div>
     )
 

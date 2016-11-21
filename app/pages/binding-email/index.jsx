@@ -1,11 +1,10 @@
 import React, { Component, PropTypes } from 'react'
-import { Link } from 'react-router'
+import { Link, browserHistory } from 'react-router'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { signout } from '../../actions/sign'
 import { getUserInfo } from '../../reducers/user'
-import { loadUserInfo } from '../../actions/user'
 import { bindingEmail } from '../../actions/account'
 import { addCaptcha } from '../../actions/captcha'
 
@@ -23,6 +22,13 @@ class BindingEmail extends Component {
     this.sendVerifyCode = this.sendVerifyCode.bind(this)
   }
 
+  componentWillMount() {
+    const { me } = this.props
+    if (me.email) {
+      browserHistory.push('/')
+    }
+  }
+
   componentDidMount() {
     const { email } = this.refs
     email.focus()
@@ -35,7 +41,7 @@ class BindingEmail extends Component {
   submit() {
 
     const self = this
-    const { bindingEmail, loadUserInfo } = this.props
+    const { bindingEmail } = this.props
     const { code, email, password } = this.refs
 
     if (!code.value) {
@@ -87,7 +93,6 @@ class BindingEmail extends Component {
   render() {
 
     const { disabled } = this.state
-    const { user } = this.props
 
     return (
       <div>
@@ -128,21 +133,19 @@ BindingEmail.contextTypes = {
 }
 
 BindingEmail.propTypes = {
-  user: PropTypes.object.isRequired,
+  me: PropTypes.object.isRequired,
   addCaptcha: PropTypes.func.isRequired,
-  bindingEmail: PropTypes.func.isRequired,
-  loadUserInfo: PropTypes.func.isRequired
+  bindingEmail: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {
   return {
-    user: getUserInfo(state)
+    me: getUserInfo(state)
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    loadUserInfo: bindActionCreators(loadUserInfo, dispatch),
     addCaptcha: bindActionCreators(addCaptcha, dispatch),
     bindingEmail: bindActionCreators(bindingEmail, dispatch)
   }

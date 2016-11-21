@@ -55,3 +55,12 @@
   word-break:break-all; /*支持IE，chrome，FF不支持*/
   word-wrap:break-word; /*支持IE，chrome，FF*/
 }
+
+
+.other{
+  margin-left:10px;
+  padding:0px 0 10px 0;
+  > span{
+    margin-right:15px;
+  }
+}

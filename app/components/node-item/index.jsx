@@ -32,8 +32,6 @@ class NodeItem extends Component {
 
     const { node } = this.props
 
-    // callback={(followStatus)=>{ this.callback(followStatus) }}
-
     return (<div styleName="item">
               <span styleName="follow">
                 <FollowNode
@@ -44,7 +42,7 @@ class NodeItem extends Component {
               <div styleName="name">{node.name}</div>
               <div>{node.brief}</div>
               <div styleName="count">
-                <span>{node.follow_count} 人关注</span>
+                <span>{node.follow_count} 位成员</span>
                 <span>{node.question_count} 个主题</span>
                 <span>{node.comment_count} 个答案</span>
               </div>

@@ -6,8 +6,8 @@ import styles from './style.scss'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { loadPeopleById, follow } from '../../actions/peoples'
-import { getPeopleById, isPeopleExist } from '../../reducers/peoples'
+import { loadPeopleById } from '../../actions/peoples'
+import { getPeopleById } from '../../reducers/peoples'
 
 import Shell from '../../shell'
 import Subnav from '../../components/subnav'
@@ -17,7 +17,6 @@ import Answers from '../../components/answers'
 import FollowPeople from '../../components/follow-people'
 import NodeList from '../../components/node-list'
 import PeopleList from '../../components/people-list'
-import FansList from '../../components/fans-list'
 
 class People extends React.Component {
 
@@ -27,7 +26,6 @@ class People extends React.Component {
       currentTab: 0
     }
     this.setCurrentTab = this.setCurrentTab.bind(this)
-    this.handleFollow = this.handleFollow.bind(this)
   }
 
   componentWillMount() {
@@ -36,8 +34,13 @@ class People extends React.Component {
     const { peopleId } = this.props.params
     const [ people ] = this.props.peoples
 
-    if (people) return
-    
+    if (people) {
+      self.props.setMeta({
+        title: people.nickname
+      })
+      return
+    }
+
     loadPeopleById({
       peopleId,
       callback: function(err, result){
@@ -77,15 +80,6 @@ class People extends React.Component {
     })
   }
 
-  handleFollow(people) {
-    const { follow } = this.props
-    follow({
-      userId: people._id,
-      callback: (err, result) => {
-      }
-    })
-  }
-
   render() {
 
     let { currentTab } = this.state
@@ -98,24 +92,13 @@ class People extends React.Component {
 
     return (
       <div>
-        <Subnav
-          middle={people.nickname}
-        />
+        <Subnav middle={people.nickname} />
 
         <div className="container">
           <div styleName="header">
             <div styleName="actions">
               <span styleName="follow">
-                <FollowPeople
-                  people={people}
-                  callback={(status)=>{
-
-                    // console.log(status)
-
-                    people.follow = status
-                    people.fans_count += status ? 1 : -1
-                  }}
-                  />
+                <FollowPeople people={people} />
               </span>
             </div>
             <img src={people.avatar_url.replace(/thumbnail/, "large")} />
@@ -175,31 +158,13 @@ class People extends React.Component {
           null
         }
 
-        {currentTab == 2 ?
-          <NodeList
-            name={people._id}
-            userId={people._id}
-          />
-          :
-          null
-        }
-
+        {currentTab == 2 ? <NodeList name={people._id} userId={people._id} /> : null}
         {currentTab == 3 ?
-          <PeopleList
-            userId={people._id}
-          />
-          :
-          null
-        }
-
+          <PeopleList type={"follow-people"} peopleId={people._id} />
+          : null}
         {currentTab == 4 ?
-          <PeopleList
-            type={"fans"}
-            userId={people._id}
-          />
-          :
-          null
-        }
+          <PeopleList type={"fans"} peopleId={people._id} />
+          : null}
 
       </div>
     )
@@ -210,20 +175,18 @@ class People extends React.Component {
 
 People.propTypes = {
   peoples: PropTypes.array.isRequired,
-  loadPeopleById: PropTypes.func.isRequired,
-  follow: PropTypes.func.isRequired
+  loadPeopleById: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state, props) {
   return {
-    peoples: getPeopleById(state, props.params.peopleId),
+    peoples: getPeopleById(state, props.params.peopleId)
   }
 }
 
 function mapDispatchToProps(dispatch, props) {
   return {
-    loadPeopleById: bindActionCreators(loadPeopleById, dispatch),
-    follow: bindActionCreators(follow, dispatch)
+    loadPeopleById: bindActionCreators(loadPeopleById, dispatch)
   }
 }
 

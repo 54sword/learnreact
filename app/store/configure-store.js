@@ -2,13 +2,11 @@ import { createStore, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 import reducer from '../reducers'
+import config from '../../config/config'
 
 export default function configureStore(preloadedState) {
 
-  const middleware = process.env.NODE_ENV === 'production' ?
-    [ thunk ] :
-    // [ thunk ]
-    [ thunk, logger() ]
+  const middleware = config.debug ? [ thunk, logger() ] : [ thunk ]
 
   const store = createStore(
     reducer,

@@ -1,75 +1,43 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 
-import CSSModules from 'react-css-modules'
-import styles from './style.scss'
+// import CSSModules from 'react-css-modules'
+// import styles from './style.scss'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { follow, unfollow, loadPeopleById } from '../../actions/peoples'
+import { follow, unfollow } from '../../actions/peoples'
 import { getUserInfo } from '../../reducers/user'
-import { loadUserInfo } from '../../actions/user'
-import { deleteQuestionList } from '../../actions/questions'
+// import { loadUserInfo } from '../../actions/user'
+// import { deleteQuestionList } from '../../actions/questions'
 
 class FollowPeople extends Component {
 
   constructor(props) {
     super(props)
-
-    const { people, callback } = this.props
-
-    this.state = {
-      people: people,
-      callback: callback || function(){} // 执行关注后，回调的状态
-    }
-    this.triggerFollow = this.triggerFollow.bind(this)
+    this.triggerFollow = this._triggerFollow.bind(this)
   }
 
-  triggerFollow(e) {
+  _triggerFollow(e) {
 
     e.preventDefault()
 
-    const { unfollow, follow,
-      loadPeopleById, loadUserInfo, deleteQuestionList
-    } = this.props
-
-    const { people, callback } = this.state
-
+    const { unfollow, follow, people } = this.props
     const handleFollow = people.follow ? unfollow : follow
 
     handleFollow({
       userId: people._id,
-      callback: (err, result) => {
-
-        console.log(err, result)
-
-        if (!err && result.success) {
-          deleteQuestionList({ name: 'home' })
-          callback(people.follow ? false : true)
-        }
-
-        /*
-        loadPeopleById({
-          peopleId: people._id,
-          callback: function(err, result){
-            loadUserInfo({})
-            deleteQuestionList({ name: 'home' })
-          }
-        })
-        */
-
-      }
+      callback: (err, result) => {}
     })
 
   }
 
   render() {
 
-    const { me } = this.props
-    const { people } = this.state
+    const { me, people } = this.props
 
     if (!me._id || people._id == me._id) {
-      return
+      return (<span></span>)
     }
 
     return (
@@ -86,20 +54,15 @@ class FollowPeople extends Component {
 
 
 FollowPeople.propTypes = {
-  // followStatus: PropTypes.bool.isRequired,
+  people: PropTypes.object.isRequired,
   me: PropTypes.object.isRequired,
-
   follow: PropTypes.func.isRequired,
-  unfollow: PropTypes.func.isRequired,
-  // loadFollowPeoples: PropTypes.func.isRequired,
-  // loadPeopleById: PropTypes.func.isRequired,
-  loadUserInfo: PropTypes.func.isRequired,
-  deleteQuestionList: PropTypes.func.isRequired
+  unfollow: PropTypes.func.isRequired
+  // deleteQuestionList: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state, props) {
   return {
-    // followStatus: getFollowStatusByPeopleId(state, props.people._id),
     me: getUserInfo(state)
   }
 }
@@ -107,17 +70,11 @@ function mapStateToProps(state, props) {
 function mapDispatchToProps(dispatch) {
   return {
     follow: bindActionCreators(follow, dispatch),
-    unfollow: bindActionCreators(unfollow, dispatch),
-    // loadFollowPeoples: bindActionCreators(loadFollowPeoples, dispatch),
-    // loadPeopleById: bindActionCreators(loadPeopleById, dispatch),
-    loadUserInfo: bindActionCreators(loadUserInfo, dispatch),
-    deleteQuestionList: bindActionCreators(deleteQuestionList, dispatch)
+    unfollow: bindActionCreators(unfollow, dispatch)
+    // deleteQuestionList: bindActionCreators(deleteQuestionList, dispatch)
   }
 }
 
-FollowPeople = CSSModules(FollowPeople, styles)
+// FollowPeople = CSSModules(FollowPeople, styles)
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(FollowPeople)
+export default connect(mapStateToProps, mapDispatchToProps)(FollowPeople)

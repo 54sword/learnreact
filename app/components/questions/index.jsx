@@ -64,11 +64,13 @@ function Questions(questions) {
                   {question.title}
                 </div>
               </Link>
-              <div>
-                <span>回答{question.answers_count}</span>
-                <span>关注{question.follow_count > 0 ? question.follow_count : null}</span>
-                <FollowQuestion question={question} />
-              </div>
+              {question.answers_count || question.follow_count ?
+                <div styleName="other">
+                  {question.answers_count > 0 ? <span>{question.answers_count} 个回答</span> : null}
+                  {question.follow_count > 0 ? <span>{question.follow_count} 人关注 </span> : null}
+                  <FollowQuestion question={question} />
+                </div>
+              : null}
             </div>
             {Answers(question.answers)}
           </div>

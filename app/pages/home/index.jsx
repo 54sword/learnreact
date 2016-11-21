@@ -95,8 +95,6 @@ class Home extends Component {
             <a href="javascript:;" styleName="addQuestion" onClick={showSign}>你对什么事物感到好奇？</a>}
         </div>
 
-
-
         <Questions
           name="home"
           filters={tabs[currentTab].filters}

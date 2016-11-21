@@ -18,11 +18,9 @@ module.exports= {
     ],
     //添加要打包在vendors里面的库
     vendors: [
-      'jquery'
-      // path.resolve(BOWER_COMPONENTS, './jquery.cookie/jquery.cookie.js'),
-
-      // path.resolve(BOWER_COMPONENTS, './bootstrap/dist/css/bootstrap.min.css'),
-      // path.resolve(BOWER_COMPONENTS, './bootstrap/dist/js/bootstrap.min.js'),
+      'jquery',
+      path.resolve(NODE_MODULES_PATH, 'swiper/dist/css/swiper.min.css'),
+      path.resolve(NODE_MODULES_PATH, 'swiper/dist/js/swiper.min.js')
     ]
   },
   output: {
@@ -87,7 +85,7 @@ module.exports= {
     new webpack.optimize.CommonsChunkPlugin('common.[hash].js', ['app', 'vendors']),
     new HtmlwebpackPlugin({
       title: config.name,
-      public_path: config.PUBLIC_PATH + '/public',
+      public_path: config.PUBLIC_PATH + '/public/images',
       template: path.resolve(APP_PATH, 'views/index.html')
     }),
 

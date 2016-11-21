@@ -44,7 +44,6 @@ import People from './pages/people'
 import Oauth from './pages/oauth'
 import OauthBinding from './pages/oauth-binding'
 
-
 import Notification from './pages/notifications'
 
 // ----

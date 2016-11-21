@@ -4,36 +4,22 @@ import { Link } from 'react-router'
 import CSSModules from 'react-css-modules'
 import styles from './style.scss'
 
-import FollowButton from './components/follow'
+import FollowButton from '../../../follow-people'
 
 class PeopleItem extends Component {
 
   constructor(props) {
     super(props)
-    const { people } = this.props
-    this.state = {
-      people: people
-    }
   }
 
   render () {
 
-    const self = this
-    const { people } = this.state
+    const { people } = this.props
 
     return (
       <div styleName="people-item">
         <span styleName="follow">
-          <FollowButton
-            people={people}
-            callback={(status)=>{
-              people.follow = status
-              people.fans_count += status ? 1 : -1
-              self.setState({
-                people: people
-              })
-            }}
-          />
+          <FollowButton people={people} />
         </span>
         <img styleName="avatar" src={people.avatar_url} />
         <div>{people.nickname}</div>
